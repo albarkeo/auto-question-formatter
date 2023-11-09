@@ -1,0 +1,57 @@
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"strings"
+)
+
+func main() {
+	input := `[INPUT QUESTIONS AND ANSWERS HERE]`
+
+	scanner := bufio.NewScanner(strings.NewReader(input))
+	var question string
+	var answers []string
+
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if line == "" {
+			continue
+		}
+		if question == "" {
+			question = line
+		} else {
+			answers = append(answers, line)
+			printQuestion(question, answers)
+			question = ""
+			answers = nil
+		}
+	}
+
+	if question != "" {
+		printQuestion(question, answers)
+	}
+}
+
+func printQuestion(question string, answers []string) {
+	fmt.Println("NewQuestion,SA")
+	fmt.Println("ID,")
+	fmt.Println("Title,")
+	fmt.Printf("QuestionText,%s\n", question)
+	fmt.Println("Points,")
+	fmt.Println("Difficulty,")
+	fmt.Println("Image,")
+	fmt.Println("InputBox,")
+
+	for _, answer := range answers {
+		answer = strings.TrimSpace(answer)
+		splitAnswers := strings.Split(answer, "or")
+		for _, splitAnswer := range splitAnswers {
+			// Trim the spaces and print each answer
+			fmt.Printf("Answer,,%s\n", strings.TrimSpace(splitAnswer))
+		}
+	}
+
+	fmt.Println("Hint,")
+	fmt.Println("Feedback,\n")
+}
