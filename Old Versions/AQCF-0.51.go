@@ -78,7 +78,7 @@ var questions []Question
 var q Question = Question{Options: make(map[string]string)}
 var optKey string
 var lastOptionRune rune = '0'
-var findNextQuestion bool
+//var findNextQuestion bool
 
 for _, line := range lines {
 	fmt.Println("Debug: Processing line - ", line)
@@ -96,18 +96,6 @@ for _, line := range lines {
         }
         continue
     }
-	if strings.HasSuffix(line, "?") {
-		fmt.Println("Debug: Line ends with '?'")
-		if q.Text == "" {
-			q.Text = line
-			q.Type = "MC"
-			findNextQuestion = false
-		} else {
-			findNextQuestion = true
-			fmt.Println("Debug: Set findNextQuestion to true")
-		}
-		continue
-	}
 	
 	if lastOptionRune != '0' && (rune(line[0]) != lastOptionRune+1) {
 		fmt.Println("Debug: Entered complex if condition")
@@ -144,8 +132,8 @@ for _, line := range lines {
 			fmt.Println("Debug: Appended question to questions and reset q")
 		}
 		lastOptionRune = '0'
-		findNextQuestion = true
-		fmt.Println("Debug: Reset lastOptionRune and set findNextQuestion to true")
+		// findNextQuestion = true
+		// fmt.Println("Debug: Reset lastOptionRune and set findNextQuestion to true")
 		continue
 	}
 	
@@ -163,13 +151,13 @@ for _, line := range lines {
 		fmt.Printf("Debug: lastOptionRune is now: %c\n", lastOptionRune) // Print the lastOptionRune
 	}
 
-	if findNextQuestion {
-		q.Text = line
-		q.Type = "MC"
-		findNextQuestion = false
-		fmt.Println("Debug: Set question text and type and reset findNextQuestion")
-		continue
-	}
+	// if findNextQuestion {
+	// 	q.Text = line
+	// 	q.Type = "MC"
+	// 	findNextQuestion = false
+	// 	fmt.Println("Debug: Set question text and type and reset findNextQuestion")
+	// 	continue
+	// }
 }
 
 

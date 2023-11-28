@@ -227,11 +227,17 @@ true
 				fmt.Println("FALSE,100")
 			}
 		} else if q.Type == "SA" {
-			answers := strings.Split(q.Answer, " or ")
-			for _, answer := range answers {
-				answer = strings.TrimSpace(answer)
-				fmt.Printf("Answer,100,%s\n", answer)
-			}
+            // Get the first (and only) option
+            var firstOption string
+            for _, option := range q.Options {
+                firstOption = option
+                break
+            }
+            answers := strings.Split(firstOption, " or ")
+            for _, answer := range answers {
+                answer = strings.TrimSpace(answer)
+                fmt.Printf("Answer,100,%s\n", answer)
+            }
 		}
 
 		fmt.Println("Hint,")
