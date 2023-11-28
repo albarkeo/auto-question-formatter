@@ -105,13 +105,18 @@ The below table shows an example of accepted input types for questions and answe
 | Multiple Choice | Multiple Choice | Short Answer | Short Answer | True or False | True or False | Written Response | Written Response |
 |---|---|---|---|---|---|---|---|
 | *Accepted Inputs* | *Accepted Answer Inputs* | *Accepted Inputs* | *Accepted Answer Inputs* | *Accepted Inputs* | *Accepted Answer Inputs* | *Accepted Inputs* | *Accepted Answer Inputs* |
-|  Question text<br>a<br>*b<br>c<br>d | *b | Question text | Single answer | Question text | TRUE | Question text | *None required* |
-|  Question text<br>1<br>2<br>3<br>4<br><br>  Correct answer 2 | Correct answer 2 | Question text ending in a question mark? | answer 1 or answer 2 or answer 3 | Question text ending in a question mark? | T | Question text ending in a question mark? |  |
-| Question text<br>w<br>x<br>y<br>z<br><br>  Answer x | Answer x | Question text | answer 1; answer 2; answer 3 | | true  |  |  |
-| Question text<br>a<br>b<br>c<br>d<br>e<br>f<br>... | correct answer: b |  | answer 1 or answer 2; answer 3 |  |  |  |  |
+|  Question text<br><br>a<br>*b<br>c<br>d | *b | Question text | Single answer | Question text | TRUE | Question text | *None required* |
+|  Question text<br><br>1<br>2<br>3<br>4<br><br>  Correct answer 2 | Correct answer 2 | Question text ending in a question mark? | answer 1 or answer 2 or answer 3 | Question text ending in a question mark? | T | Question text ending in a question mark? |  |
+| Question text<br><br>w<br>x<br>y<br>z<br><br>  Answer x | Answer x | Question text | answer 1; answer 2; answer 3 | | true  |  |  |
+| Question text<br><br>a<br>b<br>c<br>d<br>e<br>f<br>...<br><br>correct answer: b | correct answer: b |  | answer 1 or answer 2; answer 3 |  |  |  |  |
 
 ### Prefixes for Answers
+The following will be removed from an answer if written in the Word document:
 "answer ", "answer: ", "answer- ", "answers ", "answers: ", "answers- ", "correct answer ", "correct answer: ", "correct answer- ", "correct answers: ", "correct answers- " "*"
+
+### Prefixes for Options
+Bye default removeListPrefixes = true 
+This removes a,b,c,d or 1), 2), 3), 4), or A-, B-, C-, D- etc prefixes when printing the options
 
 ### Allowed Variations
 It should work with most enters and line breaks.
