@@ -1,5 +1,5 @@
 # Question Formatter
-Go program to format minimally formatted input text from Word to a Brightspace import ready CSV File
+Go program to format minimally altered input text directly from Word to a Brightspace import ready CSV File
 It currently supports:
 - Multiple Choice (MC)
 - Short Answer (SA)
