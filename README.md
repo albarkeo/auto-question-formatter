@@ -7,9 +7,9 @@ It currently supports:
 - True or False (TF)
 - Written Response (WR)
 
-It trades extra formatting in Word for a few available features in other programs such as Respondus and Brightspace's own quiz converter: https://community.d2l.com/brightspace/kb/articles/4161-quiz-question-converter
+It trades extra formatting in Word for a few features available in other programs such as Respondus and Brightspace's own quiz converter: https://community.d2l.com/brightspace/kb/articles/4161-quiz-question-converter
 
-It is limited to focusing on the main question types we receive.
+It is limited to focusing on the main bulk question types we receive.
 
 See a text-only version (v1.51) here https://go.dev/play/p/FTMU7afwqd-, (Copy in Questions, press run, then you can copy the output and use Text to Columns in Excel using commas as the delimiter)
 
@@ -107,17 +107,42 @@ true
 ```
 
 ### Prefixes for Answers
-The following will be removed from an answer if written in the Word document:
+The following will be removed from an answer if written in the Word document (not case sensitive):
 "answer ", "answer: ", "answer- ", "answers ", "answers: ", "answers- ", "correct answer ", "correct answer: ", "correct answer- ", "correct answers: ", "correct answers- " "*"
 
 ### Prefixes for Options
 By default removeListPrefixes = true
 
-This removes a,b,c,d or 1), 2), 3), 4), or A-, B-, C-, D- etc prefixes when printing the options
+This removes numbered list prefixes such as a,b,c,d or 1), 2), 3), 4), or A-, B-, C-, D- or w., x., y., z. etc when printing the options to allow for Brightspaces own ordering to be used.
 
-### Currently Accepted Variations
-It should work with most enters and line breaks.
-Tabs are considered as a potential new line and therefore option or answer for the question.
+The following characters can be identified as part of the list prefixes:
+```
+" "
+")"
+"."
+"-"
+" -"
+```
+
+### Blank Lines and Tabbed Variations
+The program will ignore empty lines breaks and remove double spacing.
+
+Tabs are considered as a potential new line and therefore considered as an option or answer for the question.
+
+### Short Answer Question Type Answers
+These can be separated by the word "or" or a semicolon ";"
+
+e.g. 
+```
+What colour is the sky?
+Azure or blue; orange; light blue or sky blue
+```
+
+They can also be registered after a tab, this is useful when copying directly from a table of questions
+e.g.
+```
+What colour is the sky?  Azure or blue; orange; light blue or sky blue
+```
 
 ## Example Output
 |NewQuestion|MC| |
