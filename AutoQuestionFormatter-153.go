@@ -24,7 +24,7 @@ var removeListPrefixes = true // Change this to false if you want to keep the pr
 var prefixes = []string{"answer ", "answer: ", "answer- ", "answers ", "answers: ", "answers- ", "correct answer ", "correct answer: ", "correct answer- ", "correct answers: ", "correct answers- "}
 
 func main() {
-    fmt.Println("Enter questions text (end with 'END'): ")
+    fmt.Println("Enter questions text (type 'END' at the end of the question block and then press 'Enter'): ")
 	reader := bufio.NewReader(os.Stdin)
 
     var inputQuestionsText string
@@ -72,6 +72,12 @@ func main() {
 			// If there is a tab in the line, treat the first part as the question and the second part as the answer
 			q.Text = splitLine[0]
 			q.Options["1"] = splitLine[1]
+			questions = append(questions, q)
+			q = Question{Options: make(map[string]string)}
+		} else if len(splitLine) == 1 {
+			// If there is no tab in the line, treat it as a Written Response question
+			q.Text = splitLine[0]
+			q.Type = "WR"
 			questions = append(questions, q)
 			q = Question{Options: make(map[string]string)}
 		}
@@ -191,6 +197,10 @@ func main() {
 
 func processConvertQuestions(questions *[]Question) {
 	for i, q := range *questions {
+		// Skip processing if the question type is already set to "WR"
+		if q.Type == "WR" {
+			continue
+		}
 		if len(q.Options) == 1 {
 			for key, value := range q.Options {
 				lowerOption := strings.ToLower(value)
@@ -311,7 +321,7 @@ func writeQuestionsToCSV(questions []Question, prefixes []string) {
 	// Format the date and time as a string
 	timestamp := now.Format("20060102_1504") 
 	// Create a CSV file with the timestamp in the name
-	file, err := os.Create("questions_" + timestamp + ".csv")
+	file, err := os.Create("Formatted_questions_" + timestamp + ".csv")
 	if err != nil {
 			log.Fatal(err)
 	}
@@ -333,6 +343,10 @@ func writeQuestionsToCSV(questions []Question, prefixes []string) {
         writer.Write([]string{"Points,"})
         writer.Write([]string{"Difficulty,"})
         writer.Write([]string{"Image,"})
+		if q.Type == "WR" {
+            writer.Write([]string{"InitialText,"})
+            writer.Write([]string{"AnswerKey,"})
+        } else {
 
         var keys []string
         for k := range q.Options {
@@ -384,11 +398,12 @@ func writeQuestionsToCSV(questions []Question, prefixes []string) {
                 writer.Write([]string{"Answer", "100", answer})
             }
         }
-
+	
         writer.Write([]string{"Hint,"})
         writer.Write([]string{"Feedback,"})
 
 		// Add an empty line after each question
 		writer.Write([]string{""})
     }
+}
 }
