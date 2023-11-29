@@ -123,4 +123,6 @@ This removes a,b,c,d or 1), 2), 3), 4), or A-, B-, C-, D- etc prefixes when prin
 
 ### Allowed Variations
 It should work with most enters and line breaks.
-Tabs are consider as a potential new line and therefore option or answer for the question. 
+Tabs are consider as a potential new line and therefore option or answer for the question.
+
+Written by Alex Barnes-Keoghan
