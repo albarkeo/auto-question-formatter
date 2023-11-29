@@ -24,12 +24,23 @@ var removeListPrefixes = true // Change this to false if you want to keep the pr
 var prefixes = []string{"answer ", "answer: ", "answer- ", "answers ", "answers: ", "answers- ", "correct answer ", "correct answer: ", "correct answer- ", "correct answers: ", "correct answers- "}
 
 func main() {
-	reader := bufio.NewReader(os.Stdin)
-    fmt.Print("Enter questions text: ")
-	inputQuestionsText, err := reader.ReadString('\n')
-	if err != nil {
-		log.Fatal(err)
-	}
+    fmt.Println("Enter questions text (end with 'END'): ")
+
+    var inputQuestionsText string
+    for {
+        line, err := reader.ReadString('\n')
+        if err != nil {
+            log.Fatal(err)
+        }
+
+        // Check if the line is the termination string
+        if strings.TrimSpace(line) == "END" {
+            break
+        }
+
+        // Append the line to the questions text
+        inputQuestionsText += line
+    }
 	
 	lines := strings.Split(inputQuestionsText, "\n")
 	questions := []Question{}
@@ -174,6 +185,7 @@ func main() {
 
 	writeQuestionsToCSV(questions, prefixes)
 
+	fmt.Println("Success, CSV file saved to location of this program")
 }
 
 func processConvertQuestions(questions *[]Question) {
