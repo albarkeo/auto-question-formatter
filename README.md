@@ -1,5 +1,5 @@
 # Question Formatter
-A program written in Go to format minimally altered input text directly from Word to a Brightspace import ready CSV File.
+A program written in Go to format minimally altered input text directly from Word to a Brightspace import-ready CSV File.
 
 It currently supports:
 - Multiple Choice (MC)
@@ -7,13 +7,17 @@ It currently supports:
 - True or False (TF)
 - Written Response (WR)
 
-See a text only older version here https://go.dev/play/p/FTMU7afwqd-, (Press run, then you can copy out the output and use Text to Columns in Excel using a comma as the delimiter)
+It trades extra formatting in Word for a few available features in other programs such as Respondus and Brightspace's own quiz converter: https://community.d2l.com/brightspace/kb/articles/4161-quiz-question-converter
+
+It is limited to focusing on the main question types we receive.
+
+See a text-only version (v1.51) here https://go.dev/play/p/FTMU7afwqd-, (Copy in Questions, press run, then you can copy the output and use Text to Columns in Excel using commas as the delimiter)
 
 ## Preformatting Requirements
 Add a "---" or "+++" between each question
 
 ## Example of Accepted Inputs
-Use the following sample input as a test in the text converter (https://go.dev/play/p/FTMU7afwqd-) or with the latest version of the program (download the .exe)
+Use the following sample input as a test in the text converter (https://go.dev/play/p/FTMU7afwqd-) or with the latest version of the program (download the .exe, install and run, follow the text prompts)
 
 ```
 What is the capital of Australia?
@@ -102,6 +106,256 @@ true
 ---
 ```
 
+### Prefixes for Answers
+The following will be removed from an answer if written in the Word document:
+"answer ", "answer: ", "answer- ", "answers ", "answers: ", "answers- ", "correct answer ", "correct answer: ", "correct answer- ", "correct answers: ", "correct answers- " "*"
+
+### Prefixes for Options
+By default removeListPrefixes = true
+
+This removes a,b,c,d or 1), 2), 3), 4), or A-, B-, C-, D- etc prefixes when printing the options
+
+### Currently Accepted Variations
+It should work with most enters and line breaks.
+Tabs are considered as a potential new line and therefore option or answer for the question.
+
+## Example Output
+|NewQuestion|MC| |
+|:----|:----|:----|
+|ID| | |
+|Title| | |
+|QuestionText|What is the capital of Australia?| |
+|Points| | |
+|Difficulty| | |
+|Image| | |
+|Option|0|Sydney|
+|Option|0|Melbourne|
+|Option|100|Canberra|
+|Option|0|Adelaide|
+|Hint| | |
+|Feedback| | |
+| | | |
+|NewQuestion|MC| |
+|ID| | |
+|Title| | |
+|QuestionText|What is the capital of Australia?| |
+|Points| | |
+|Difficulty| | |
+|Image| | |
+|Option|0|Sydney|
+|Option|0|Melbourne|
+|Option|100|Canberra|
+|Option|0|Adelaide|
+|Hint| | |
+|Feedback| | |
+| | | |
+|NewQuestion|SA| |
+|ID| | |
+|Title| | |
+|QuestionText|Write the value of the 5 in the number 8526.| |
+|Points| | |
+|Difficulty| | |
+|Image| | |
+|Answer|100|500|
+|Hint| | |
+|Feedback| | |
+| | | |
+|NewQuestion|SA| |
+|ID| | |
+|Title| | |
+|QuestionText|Write the value of the 7 in the number 97 450.| |
+|Points| | |
+|Difficulty| | |
+|Image| | |
+|Answer|100|7000|
+|Answer|100|7 000|
+|Answer|100|7,000|
+|Hint| | |
+|Feedback| | |
+| | | |
+|NewQuestion|SA| |
+|ID| | |
+|Title| | |
+|QuestionText|Write this as a number. 7 tens of thousands, 4 hundreds and 2 ones| |
+|Points| | |
+|Difficulty| | |
+|Image| | |
+|Answer|100|70402|
+|Answer|100|70 402|
+|Answer|100|70,402|
+|Hint| | |
+|Feedback| | |
+| | | |
+|NewQuestion|SA| |
+|ID| | |
+|Title| | |
+|QuestionText|9 + 6 =| |
+|Points| | |
+|Difficulty| | |
+|Image| | |
+|Answer|100|15|
+|Hint| | |
+|Feedback| | |
+| | | |
+|NewQuestion|SA| |
+|ID| | |
+|Title| | |
+|QuestionText|16 + 7 =| |
+|Points| | |
+|Difficulty| | |
+|Image| | |
+|Answer|100|23|
+|Hint| | |
+|Feedback| | |
+| | | |
+|NewQuestion|SA| |
+|ID| | |
+|Title| | |
+|QuestionText|24 + 5 =| |
+|Points| | |
+|Difficulty| | |
+|Image| | |
+|Answer|100|29|
+|Hint| | |
+|Feedback| | |
+| | | |
+|NewQuestion|TF| |
+|ID| | |
+|Title| | |
+|QuestionText|The Earth is the only planet in our solar system with liquid water on its surface. | |
+|Points| | |
+|Difficulty| | |
+|Image| | |
+|TRUE|0| |
+|FALSE|100| |
+|Hint| | |
+|Feedback| | |
+| | | |
+|NewQuestion|SA| |
+|ID| | |
+|Title| | |
+|QuestionText|What is the colour of grass?| |
+|Points| | |
+|Difficulty| | |
+|Image| | |
+|Answer|100|green|
+|Answer|100|brown|
+|Hint| | |
+|Feedback| | |
+| | | |
+|NewQuestion|SA| |
+|ID| | |
+|Title| | |
+|QuestionText|Short answer no question mark| |
+|Points| | |
+|Difficulty| | |
+|Image| | |
+|Answer|100|a short answer|
+|Hint| | |
+|Feedback| | |
+| | | |
+|NewQuestion|MC| |
+|ID| | |
+|Title| | |
+|QuestionText|Which planet is known as the Red Planet?| |
+|Points| | |
+|Difficulty| | |
+|Image| | |
+|Option|0|Venus|
+|Option|100|Mars|
+|Option|0|Jupiter|
+|Option|0|Saturn|
+|Hint| | |
+|Feedback| | |
+| | | |
+|NewQuestion|TF| |
+|ID| | |
+|Title| | |
+|QuestionText|Mars is known as the Red Planet| |
+|Points| | |
+|Difficulty| | |
+|Image| | |
+|TRUE|100| |
+|FALSE|0| |
+|Hint| | |
+|Feedback| | |
+| | | |
+|NewQuestion|TF| |
+|ID| | |
+|Title| | |
+|QuestionText|Venus is known as the Red Planet| |
+|Points| | |
+|Difficulty| | |
+|Image| | |
+|TRUE|0| |
+|FALSE|100| |
+|Hint| | |
+|Feedback| | |
+| | | |
+|NewQuestion|TF| |
+|ID| | |
+|Title| | |
+|QuestionText|Jupiter is known as the Red Planet| |
+|Points| | |
+|Difficulty| | |
+|Image| | |
+|TRUE|0| |
+|FALSE|100| |
+|Hint| | |
+|Feedback| | |
+| | | |
+|NewQuestion|MC| |
+|ID| | |
+|Title| | |
+|QuestionText|Who wrote the novel "Pride and Prejudice"?| |
+|Points| | |
+|Difficulty| | |
+|Image| | |
+|Option|0|Charles Dickens|
+|Option|100|Jane Austen|
+|Option|0|Mark Twain|
+|Option|0|George Orwell|
+|Hint| | |
+|Feedback| | |
+| | | |
+|NewQuestion|MC| |
+|ID| | |
+|Title| | |
+|QuestionText|What is the square root of 81?| |
+|Points| | |
+|Difficulty| | |
+|Image| | |
+|Option|0|8|
+|Option|100|9|
+|Option|0|10|
+|Option|0|11|
+|Option|0|999|
+|Hint| | |
+|Feedback| | |
+| | | |
+|NewQuestion|TF| |
+|ID| | |
+|Title| | |
+|QuestionText|True or false, this has been a difficult but rewarding process| |
+|Points| | |
+|Difficulty| | |
+|Image| | |
+|TRUE|100| |
+|FALSE|0| |
+|Hint| | |
+|Feedback| | |
+| | | |
+|NewQuestion|WR| |
+|ID| | |
+|Title| | |
+|QuestionText|What colour is the sky?| |
+|Points| | |
+|Difficulty| | |
+|Image| | |
+|InitialText| | |
+|AnswerKey| | |
+
+
 ## Accepted Input Types
 The below table shows an example of accepted input types for questions and answers, it's a bit of a mess, the previous examples might be clearer:
 
@@ -113,17 +367,5 @@ The below table shows an example of accepted input types for questions and answe
 | Question text<br><br>w<br>x<br>y<br>z<br><br>  Answer x | Answer x | Question text<br><br>answer 1; answer 2; answer 3 | answer 1; answer 2; answer 3 | | true  |  |  |
 | Question text<br><br>a<br>b<br>c<br>d<br>e<br>f<br>...<br><br>correct answer: b | correct answer: b |  | answer 1 or answer 2; answer 3 |  | FaLsE  |  |  |
 
-### Prefixes for Answers
-The following will be removed from an answer if written in the Word document:
-"answer ", "answer: ", "answer- ", "answers ", "answers: ", "answers- ", "correct answer ", "correct answer: ", "correct answer- ", "correct answers: ", "correct answers- " "*"
-
-### Prefixes for Options
-By default removeListPrefixes = true
-
-This removes a,b,c,d or 1), 2), 3), 4), or A-, B-, C-, D- etc prefixes when printing the options
-
-### Allowed Variations
-It should work with most enters and line breaks.
-Tabs are consider as a potential new line and therefore option or answer for the question.
 
 *Developed by Alex Barnes-Keoghan*
