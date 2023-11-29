@@ -7,9 +7,9 @@ It currently supports:
 - True or False (TF)
 - Written Response (WR)
 
-It trades extra formatting in Word for a few available features in other programs such as Respondus and Brightspace's own quiz converter: https://community.d2l.com/brightspace/kb/articles/4161-quiz-question-converter
+It trades extra formatting in Word for a few features available in other programs such as Respondus and Brightspace's own quiz converter: https://community.d2l.com/brightspace/kb/articles/4161-quiz-question-converter
 
-It is limited to focusing on the main question types we receive.
+It is limited to focusing on the main bulk question types we receive.
 
 See a text-only version (v1.51) here https://go.dev/play/p/FTMU7afwqd-, (Copy in Questions, press run, then you can copy the output and use Text to Columns in Excel using commas as the delimiter)
 
