@@ -25,6 +25,7 @@ var prefixes = []string{"answer ", "answer: ", "answer- ", "answers ", "answers:
 
 func main() {
     fmt.Println("Enter questions text (end with 'END'): ")
+	reader := bufio.NewReader(os.Stdin)
 
     var inputQuestionsText string
     for {
