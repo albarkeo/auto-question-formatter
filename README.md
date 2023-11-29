@@ -118,7 +118,8 @@ The following will be removed from an answer if written in the Word document:
 "answer ", "answer: ", "answer- ", "answers ", "answers: ", "answers- ", "correct answer ", "correct answer: ", "correct answer- ", "correct answers: ", "correct answers- " "*"
 
 ### Prefixes for Options
-By default removeListPrefixes = true 
+By default removeListPrefixes = true
+
 This removes a,b,c,d or 1), 2), 3), 4), or A-, B-, C-, D- etc prefixes when printing the options
 
 ### Allowed Variations
