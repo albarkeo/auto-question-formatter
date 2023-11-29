@@ -4,10 +4,9 @@ It currently supports:
 - Multiple Choice (MC)
 - Short Answer (SA)
 - True or False (TF)
+- Written Response (WR)
 
-With the next planned implementation being Written Response (WR)
-
-See a text only version here https://go.dev/play/p/FTMU7afwqd-, (Press run, then you can copy out the output and use Text to Columns in Excel using a comma as the delimiter)
+See a text only older version here https://go.dev/play/p/FTMU7afwqd-, (Press run, then you can copy out the output and use Text to Columns in Excel using a comma as the delimiter)
 
 ## Preformatting Requirements
 Add a "---" or "+++" between each question
