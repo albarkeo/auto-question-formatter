@@ -24,25 +24,25 @@ var removeListPrefixes = true // Change this to false if you want to keep the pr
 var prefixes = []string{"answer ", "answer: ", "answer- ", "answers ", "answers: ", "answers- ", "correct answer ", "correct answer: ", "correct answer- ", "correct answers: ", "correct answers- "}
 
 func main() {
-    fmt.Println("Enter questions text (type 'END' at the end of the question block and then press 'Enter'): ")
+	fmt.Println("Enter questions text, type 'END' at the end of the question block, then press 'Enter': ")
 	reader := bufio.NewReader(os.Stdin)
 
-    var inputQuestionsText string
-    for {
-        line, err := reader.ReadString('\n')
-        if err != nil {
-            log.Fatal(err)
-        }
+	var inputQuestionsText string
+	for {
+		line, err := reader.ReadString('\n')
+		if err != nil {
+			log.Fatal(err)
+		}
 
-        // Check if the line is the termination string
-        if strings.TrimSpace(line) == "END" {
-            break
-        }
+		// Check if the line is the termination string
+		if strings.TrimSpace(line) == "END" {
+			break
+		}
 
-        // Append the line to the questions text
-        inputQuestionsText += line
-    }
-	
+		// Append the line to the questions text
+		inputQuestionsText += line
+	}
+
 	lines := strings.Split(inputQuestionsText, "\n")
 	questions := []Question{}
 	q := Question{Options: make(map[string]string)}
@@ -59,7 +59,7 @@ func main() {
 		}
 		if strings.HasPrefix(line, "*") {
 			line = strings.TrimPrefix(line, "*") // this line is the correct answer...
-			answerKey := string(line[0]) // Get the first character of the line as the answer key
+			answerKey := string(line[0])         // Get the first character of the line as the answer key
 			q.Answer = answerKey
 		}
 
@@ -72,12 +72,6 @@ func main() {
 			// If there is a tab in the line, treat the first part as the question and the second part as the answer
 			q.Text = splitLine[0]
 			q.Options["1"] = splitLine[1]
-			questions = append(questions, q)
-			q = Question{Options: make(map[string]string)}
-		} else if len(splitLine) == 1 {
-			// If there is no tab in the line, treat it as a Written Response question
-			q.Text = splitLine[0]
-			q.Type = "WR"
 			questions = append(questions, q)
 			q = Question{Options: make(map[string]string)}
 		}
@@ -98,12 +92,12 @@ func main() {
 			continue
 		}
 
-			// Check if line contains "---"
-			if strings.Contains(line, "---") {		
-			parts := strings.Split(line, "---")
-			line = parts[0] // Only consider the part before the "---" delimiter
-			continue
-			}
+		// // Check if line contains "---"
+		// if strings.Contains(line, "---") {
+		// 	parts := strings.Split(line, "---")
+		// 	line = parts[0] // Only consider the part before the "---" delimiter
+		// 	continue
+		// }
 
 		lineCount++
 
@@ -113,7 +107,6 @@ func main() {
 			lastOptionRune = '0'
 			continue
 		}
-
 
 		// Check if line is an option
 		if len(line) > 1 && isValidCharacter(strings.ToLower(string(line[0]))) {
@@ -130,12 +123,11 @@ func main() {
 				continue
 			}
 		}
-		
-
 
 		// If line is not a question or an option, it must be an answer
 		if len(q.Options) == 0 {
 			q.Options["1"] = line
+			q.Type = "WR"
 		} else {
 			// Check if line is an option
 			if len(line) > 1 && isValidCharacter(strings.ToLower(string(line[0:1]))) && (line[1] == ')' || line[1] == '.') {
@@ -168,21 +160,25 @@ func main() {
 						}
 					}
 				}
-				// If there is only one option, treat the answer line as both an answer and an option
-				if len(q.Options) == 1 {
-					q.Type = "TF"
-					answerKey := string(lastOptionRune + 1)
-					q.Options[answerKey] = line
-					q.Answer = answerKey
-				} else {
+
+				switch len(q.Options) {
+				case 1:
+					if q.Type != "WR" {
+						q.Type = "TF"
+						answerKey := string(lastOptionRune + 1)
+						q.Options[answerKey] = line
+						q.Answer = answerKey
+					}
+				default:
 					q.Type = "MC"
 				}
 			}
 		}
+
 	}
 
 	// Add the last question
-	if q.Text != "" && len(q.Options) > 0 {
+	if q.Text != "" {
 		questions = append(questions, q)
 	}
 
@@ -192,16 +188,16 @@ func main() {
 
 	writeQuestionsToCSV(questions, prefixes)
 
-	fmt.Println("Success, CSV file saved to location of this program")
+	fmt.Println()
+	fmt.Println("Success! CSV file saved to location of this program")
 }
 
 func processConvertQuestions(questions *[]Question) {
 	for i, q := range *questions {
-		// Skip processing if the question type is already set to "WR"
-		if q.Type == "WR" {
-			continue
-		}
-		if len(q.Options) == 1 {
+		switch len(q.Options) {
+		case 0:
+			(*questions)[i].Type = "WR"
+		case 1:
 			for key, value := range q.Options {
 				lowerOption := strings.ToLower(value)
 				if lowerOption == "t" || lowerOption == "f" || lowerOption == "true" || lowerOption == "false" {
@@ -223,7 +219,7 @@ func processConvertQuestions(questions *[]Question) {
 					}
 				}
 			}
-		} else {
+		default:
 			(*questions)[i].Type = "MC"
 		}
 	}
@@ -319,91 +315,91 @@ func writeQuestionsToCSV(questions []Question, prefixes []string) {
 	now := time.Now()
 
 	// Format the date and time as a string
-	timestamp := now.Format("20060102_1504") 
+	timestamp := now.Format("20060102_1504")
 	// Create a CSV file with the timestamp in the name
 	file, err := os.Create("Formatted_questions_" + timestamp + ".csv")
 	if err != nil {
-			log.Fatal(err)
+		log.Fatal(err)
 	}
 	defer file.Close()
 
-    // Create a CSV writer
-    writer := csv.NewWriter(file)
-    defer writer.Flush()
+	// Create a CSV writer
+	writer := csv.NewWriter(file)
+	defer writer.Flush()
 
-    // Loop through the questions
-    for _, q := range questions {
-        err := writer.Write([]string{"NewQuestion", q.Type})
-        if err != nil {
-            log.Fatal(err)
-        }
-        writer.Write([]string{"ID,"})
-        writer.Write([]string{"Title,"})
-        writer.Write([]string{"QuestionText", q.Text})
-        writer.Write([]string{"Points,"})
-        writer.Write([]string{"Difficulty,"})
-        writer.Write([]string{"Image,"})
+	// Loop through the questions
+	for _, q := range questions {
+		err := writer.Write([]string{"NewQuestion", q.Type})
+		if err != nil {
+			log.Fatal(err)
+		}
+		writer.Write([]string{"ID,"})
+		writer.Write([]string{"Title,"})
+		writer.Write([]string{"QuestionText", q.Text})
+		writer.Write([]string{"Points,"})
+		writer.Write([]string{"Difficulty,"})
+		writer.Write([]string{"Image,"})
 		if q.Type == "WR" {
-            writer.Write([]string{"InitialText,"})
-            writer.Write([]string{"AnswerKey,"})
-        } else {
+			writer.Write([]string{"InitialText,"})
+			writer.Write([]string{"AnswerKey,"})
+		} else {
 
-        var keys []string
-        for k := range q.Options {
-            keys = append(keys, k)
-        }
-        sort.Strings(keys)
+			var keys []string
+			for k := range q.Options {
+				keys = append(keys, k)
+			}
+			sort.Strings(keys)
 
-        if q.Type == "MC" {
-            for _, key := range keys {
-                option := q.Options[key]
-                score := "0"
-                if key == q.Answer {
-                    score = "100"
-                }
-                if removeListPrefixes {
-                    writer.Write([]string{"Option", score, option})
-                } else {
-                    writer.Write([]string{"Option", score, key + " " + option})
-                }
-            }
-        } else if q.Type == "TF" {
-            if strings.ToLower(q.Answer) == "true" || strings.ToLower(q.Answer) == "t" {
-                writer.Write([]string{"TRUE", "100"})
-                writer.Write([]string{"FALSE", "0"})
-            } else {
-                writer.Write([]string{"TRUE", "0"})
-                writer.Write([]string{"FALSE", "100"})
-            }
-        } else if q.Type == "SA" {
-            // Get the first (and only) option
-            var firstOption string
-            for _, option := range q.Options {
-                firstOption = option
-                break
-            }
-            r := regexp.MustCompile(`\s+or\s+|\s*;\s*|\s*\t\s*`)
-            answers := r.Split(firstOption, -1)
-            for i, answer := range answers {
-                answer = strings.TrimSpace(answer)
-                if i == 0 {
-                    lowerAnswer := strings.ToLower(answer)
-                    for _, prefix := range prefixes {
-                        if strings.HasPrefix(lowerAnswer, strings.ToLower(prefix)) {
-                            answer = strings.TrimPrefix(answer, prefix)
-                            break
-                        }
-                    }
-                }
-                writer.Write([]string{"Answer", "100", answer})
-            }
-        }
-	
-        writer.Write([]string{"Hint,"})
-        writer.Write([]string{"Feedback,"})
+			if q.Type == "MC" {
+				for _, key := range keys {
+					option := q.Options[key]
+					score := "0"
+					if key == q.Answer {
+						score = "100"
+					}
+					if removeListPrefixes {
+						writer.Write([]string{"Option", score, option})
+					} else {
+						writer.Write([]string{"Option", score, key + " " + option})
+					}
+				}
+			} else if q.Type == "TF" {
+				if strings.ToLower(q.Answer) == "true" || strings.ToLower(q.Answer) == "t" {
+					writer.Write([]string{"TRUE", "100"})
+					writer.Write([]string{"FALSE", "0"})
+				} else {
+					writer.Write([]string{"TRUE", "0"})
+					writer.Write([]string{"FALSE", "100"})
+				}
+			} else if q.Type == "SA" {
+				// Get the first (and only) option
+				var firstOption string
+				for _, option := range q.Options {
+					firstOption = option
+					break
+				}
+				r := regexp.MustCompile(`\s+or\s+|\s*;\s*|\s*\t\s*`)
+				answers := r.Split(firstOption, -1)
+				for i, answer := range answers {
+					answer = strings.TrimSpace(answer)
+					if i == 0 {
+						lowerAnswer := strings.ToLower(answer)
+						for _, prefix := range prefixes {
+							if strings.HasPrefix(lowerAnswer, strings.ToLower(prefix)) {
+								answer = strings.TrimPrefix(answer, prefix)
+								break
+							}
+						}
+					}
+					writer.Write([]string{"Answer", "100", answer})
+				}
+			}
 
-		// Add an empty line after each question
-		writer.Write([]string{""})
-    }
-}
+			writer.Write([]string{"Hint,"})
+			writer.Write([]string{"Feedback,"})
+
+			// Add an empty line after each question
+			writer.Write([]string{""})
+		}
+	}
 }
