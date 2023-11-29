@@ -110,9 +110,9 @@ func main() {
 
 		// Check if line is an option
 		if len(line) > 1 && isValidCharacter(strings.ToLower(string(line[0]))) {
-			if isValidListItemDelimiter(string(line[1])) {
+			if isValidListItemDelimiter(string(line[1])) || (len(line) > 2 && isValidListItemDelimiter(string(line[1:3]))) {
 				optKey = string(line[0])
-				if line[1] == ' ' && line[2] == '-' {
+				if len(line) > 2 && line[1] == ' ' && line[2] == '-' {
 					q.Options[optKey] = strings.TrimSpace(line[3:])
 				} else {
 					q.Options[optKey] = strings.TrimSpace(line[2:])
@@ -235,12 +235,13 @@ func isValidCharacter(s string) bool {
 }
 
 func isValidListItemDelimiter(s string) bool {
-	for _, c := range s {
-		if c != ')' && c != '.' && c != '-' {
-			return false
+	validDelimiters := []string{")", ".", "-", " -"}
+	for _, delimiter := range validDelimiters {
+		if s == delimiter {
+			return true
 		}
 	}
-	return true
+	return false
 }
 
 func printQuestions(questions []Question, prefixes []string) {
