@@ -334,15 +334,15 @@ func writeQuestionsToCSV(questions []Question, prefixes []string) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		writer.Write([]string{"ID,"})
-		writer.Write([]string{"Title,"})
+		writer.Write([]string{"ID"})
+		writer.Write([]string{"Title"})
 		writer.Write([]string{"QuestionText", q.Text})
-		writer.Write([]string{"Points,"})
-		writer.Write([]string{"Difficulty,"})
-		writer.Write([]string{"Image,"})
+		writer.Write([]string{"Points"})
+		writer.Write([]string{"Difficulty"})
+		writer.Write([]string{"Image"})
 		if q.Type == "WR" {
-			writer.Write([]string{"InitialText,"})
-			writer.Write([]string{"AnswerKey,"})
+			writer.Write([]string{"InitialText"})
+			writer.Write([]string{"AnswerKey"})
 		} else {
 
 			var keys []string
@@ -396,8 +396,8 @@ func writeQuestionsToCSV(questions []Question, prefixes []string) {
 				}
 			}
 
-			writer.Write([]string{"Hint,"})
-			writer.Write([]string{"Feedback,"})
+			writer.Write([]string{"Hint"})
+			writer.Write([]string{"Feedback"})
 
 			// Add an empty line after each question
 			writer.Write([]string{""})
