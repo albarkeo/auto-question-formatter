@@ -19,6 +19,8 @@ Add a "---" or "+++" between each question, or have each question numbered seque
 ## Example of Accepted Inputs
 Use the following sample inputs as a test in the text converter (https://go.dev/play/p/FTMU7afwqd-) or with the latest version of the program (download the .exe, install and run, follow the text prompts)
 
+<br>
+
 <details>
   <summary><b>Click to expand v1.54 sample inputs (text and .csv output) </b></summary>
   
@@ -111,7 +113,7 @@ true
 ---
 ```
 </details>
-
+<br>
 <details>
   <summary><b>Click to expand v1.51 sample inputs (text output only)</b></summary>
 
