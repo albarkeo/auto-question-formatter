@@ -9,12 +9,12 @@ It currently supports:
 
 It trades extra formatting in Word for a few features available in other programs such as Respondus and Brightspace's own quiz converter: https://community.d2l.com/brightspace/kb/articles/4161-quiz-question-converter
 
-It is limited to focusing on the main bulk question types we receive.
+It is limited to focusing on the main bulk of question types we receive.
 
 See a text-only version (v1.51) here https://go.dev/play/p/FTMU7afwqd-, (Copy in Questions, press run, then you can copy the output and use Text to Columns in Excel using commas as the delimiter)
 
 ## Preformatting Requirements
-Add a "---" or "+++" between each question
+Add a "---" or "+++" between each question, or have each question numbered sequentially (v1.54) '1. , 2. , 3.' etc 
 
 ## Example of Accepted Inputs
 Use the following sample input as a test in the text converter (https://go.dev/play/p/FTMU7afwqd-) or with the latest version of the program (download the .exe, install and run, follow the text prompts)
@@ -71,16 +71,19 @@ Which planet is known as the Red Planet?
 4) Saturn
 
 2
----
+
++++
 Mars is known as the Red Planet
 TRUE
----
++++
 Venus is known as the Red Planet
 F
----
+
++++
 Jupiter is known as the Red Planet
 False
----
+
++++
 Who wrote the novel "Pride and Prejudice"?
 
 A) Charles Dickens
@@ -392,5 +395,93 @@ The below table shows an example of accepted input types for questions and answe
 | Question text<br><br>w<br>x<br>y<br>z<br><br>  Answer x | Answer x | Question text<br><br>answer 1; answer 2; answer 3 | answer 1; answer 2; answer 3 | | true  |  |  |
 | Question text<br><br>a<br>b<br>c<br>d<br>e<br>f<br>...<br><br>correct answer: b | correct answer: b |  | answer 1 or answer 2; answer 3 |  | FaLsE  |  |  |
 
+## v1.54 Sample Data
+
+```
+What is the capital of Australia?
+
+a. Sydney
+b. Melbourne
+*c. Canberra
+d. Adelaide
++++
+
+What is the capital of Australia?
+
+a. Sydney
+b. Melbourne
+c. Canberra
+d. Adelaide
+
+Answer c
++++
+What colour is the sky?
+Azure or blue; orange
++++
+Write the value of the 5 in the number 8526.	500
++++
+Write the value of the 7 in the number 97 450.	7000 or 7 000 or 7,000
++++
+Write this as a number. 7 tens of thousands, 4 hundreds and 2 ones	70402 or 70 402 or 70,402
++++
+9 + 6 =
+15
++++
+16 + 7 =	23
+---
+24 + 5 =	29
+---
+628 - 284 =  344
+---
+The Earth is the only planet in our solar system with liquid water on its surface. 	False
+---
+What is the colour of grass?
+answer green or brown
+---
+Short answer no question mark
+a short answer
+---
+Which planet is known as the Red Planet?
+
+1) Venus
+2) Mars
+3) Jupiter
+4) Saturn
+
+2
+
+1. Mars is known as the Red Planet
+TRUE
+
+2. Venus is known as the Red Planet
+F
+
+3. Jupiter is known as the Red Planet
+False
+
+4. Who wrote the novel "Pride and Prejudice"?
+
+A) Charles Dickens
+B) Jane Austen
+C) Mark Twain
+D) George Orwell
+
+Correct answer B.
+---
+What is the square root of 81?
+
+a - 8
+b - 9
+c - 10
+d - 11
+e - 999
+
+b
+---
+True or false, this has been a difficult but rewarding process
+
+true
+---
+```
 
 *Developed by Alex Barnes-Keoghan*
