@@ -8,6 +8,7 @@ import (
 	"os"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 	"unicode"
@@ -18,6 +19,7 @@ type Question struct {
 	Text    string
 	Options map[string]string
 	Answer  string
+	ID      int
 }
 
 var removeListPrefixes = true // Change this to false if you want to keep the prefixes
@@ -45,12 +47,13 @@ func main() {
 
 	lines := strings.Split(inputQuestionsText, "\n")
 	questions := []Question{}
+	questionNumber := 1
 	q := Question{Options: make(map[string]string)}
 	optKey := ""
 	lastOptionRune := rune('0')
-
-	// Loop through the lines
 	lineCount := 0
+	// Loop through the lines
+
 	for _, line := range lines {
 		line = strings.TrimSpace(line)
 		line = strings.TrimPrefix(line, "•\t")
@@ -98,29 +101,43 @@ func main() {
 
 		lineCount++
 
-		// Check if line is a question
-		if lineCount == 1 {
-			q.Text = line
-			lastOptionRune = '0'
+		// Check if line starts with a new questionNumber
+		if strings.HasPrefix(line, strconv.Itoa(questionNumber)) {
+			if q.Text != "" && len(q.Options) > 0 {
+				questions = append(questions, q)
+			}
+			q = Question{Options: make(map[string]string)}
+
+			// Remove the question number, '.' and any leading white space from the line
+			questionLineNoNumber := strings.TrimSpace(strings.TrimPrefix(strings.TrimPrefix(line, strconv.Itoa(questionNumber)), "."))
+
+			// Assign the final line to q.Text
+			q.Text = questionLineNoNumber
+			q.ID = questionNumber
+			questionNumber++
 			continue
 		}
 
+		// Check if line is a question
+		if lineCount == 1 {
+			if q.Text == "" {
+				q.Text = line
+			}
+			lastOptionRune = '0'
+			continue
+		}
 		// Check if line is an option
 		if len(line) > 1 && isValidCharacter(strings.ToLower(string(line[0]))) {
-			if isValidListItemDelimiter(string(line[1])) || (len(line) > 2 && isValidListItemDelimiter(string(line[1:3]))) {
+			delimiter, optionStartIndex := isValidListItemDelimiter(line[1:])
+			if delimiter != "" {
 				optKey = string(line[0])
-				if len(line) > 2 && line[1] == ' ' && line[2] == '-' {
-					q.Options[optKey] = strings.TrimSpace(line[3:])
-				} else {
-					q.Options[optKey] = strings.TrimSpace(line[2:])
-				}
+				q.Options[optKey] = strings.TrimSpace(line[optionStartIndex+1:])
 				if lastOptionRune < rune(optKey[0]) {
 					lastOptionRune = rune(optKey[0])
 				}
 				continue
 			}
 		}
-
 		// If line is not a question or an option, it must be an answer
 		if len(q.Options) == 0 {
 			q.Options["1"] = line
@@ -230,21 +247,21 @@ func isValidCharacter(s string) bool {
 	return true
 }
 
-func isValidListItemDelimiter(s string) bool {
-	validDelimiters := []string{")", ".", "-", " -"}
+func isValidListItemDelimiter(s string) (string, int) {
+	validDelimiters := []string{") ", ". ", "- ", " - ", "). ", ")."}
 	for _, delimiter := range validDelimiters {
-		if s == delimiter {
-			return true
+		if strings.HasPrefix(s, delimiter) {
+			return delimiter, len(delimiter)
 		}
 	}
-	return false
+	return "", -1
 }
 
 func printQuestions(questions []Question, prefixes []string) {
 	for _, q := range questions {
 		fmt.Println()
 		fmt.Printf("NewQuestion,%s\n", q.Type)
-		fmt.Println("ID,")
+		fmt.Printf("ID,%d\n", q.ID)
 		fmt.Println("Title,")
 		fmt.Printf("QuestionText,%s\n", q.Text)
 		fmt.Println("Points,")
