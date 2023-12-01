@@ -112,6 +112,21 @@ True or false, this has been a difficult but rewarding process
 true
 ---
 ```
+
+### Also works copying from a table formatted like this:
+
+|Question|Acceptable answers| |
+|----|----|----|
+|Write the value of the 5 in the number 8526.|500|---|
+|Write the value of the 7 in the number 97 450.|7000 or 7 000 or 7,000|---|
+|Write this as a number. 7 tens of thousands, 4 hundreds and 2 ones|70402 or 70 402 or 70,402|---|
+|9 + 6 =|15|---|
+|16 + 7 =|23|---|
+|24 + 5 =|29|+++|
+|628 - 284 =|344|+++|
+|The Earth is the only planet in our solar system with liquid water on its surface. |False|+++|
+|The Great Wall of China is visible from space with the naked eye. |false|+++|
+|True or False: Diamonds are the hardest natural substance on Earth. |Answer: True|+++|
 </details>
 <br>
 <details>
