@@ -21,6 +21,7 @@ type Question struct {
 	Answer    string
 	ID        int
 	OptionKey string
+	AnswerKey string
 }
 
 var removeListPrefixes = true // Change this to false if you want to keep the prefixes
@@ -49,8 +50,8 @@ func main() {
 	reader := bufio.NewReader(os.Stdin)
 	inputQuestionsText := readInput(reader)
 	lines := strings.Split(inputQuestionsText, "\n")
-	questions := []Question{}
 	questionNumber := 1
+	questions := []Question{}
 	q := Question{Options: make(map[string]string)}
 	lastOptionRune := rune('0')
 	lineCount := 0
@@ -62,25 +63,26 @@ func main() {
 			continue
 		}
 
-		line, isAnswerLine := handleCorrectAnswerLine(line, &q)
-		if isAnswerLine {
+		if handleNewQuestion(line, &q, &questions, &questionNumber) {
+			lineCount++
 			continue
 		}
 
-		handleOptionLine(line, &q, &lastOptionRune)
-
-		handleTabSeparatedLine(line, &q, &questions)
+		lineCount++
 
 		if handleEndOfQuestion(line, &q, &questions) {
 			lineCount = 0
 			continue
 		}
-		if handleNewQuestion(line, &q, &questions, &questionNumber) {
-			lineCount++
-			continue
-		}
+
 		handleQuestionTextLine(line, &q, lineCount)
-		lineCount++
+
+		q, line, _ := handleCorrectAnswerLine(line, &q)
+
+		handleOptionLine(line, q, &lastOptionRune)
+
+		handleTabSeparatedLine(line, q, &questions)
+
 	}
 
 	// Add the last question
@@ -136,16 +138,17 @@ func handleTabSeparatedLine(line string, q *Question, questions *[]Question) {
 		*questions = append(*questions, *q)
 		*q = Question{Options: make(map[string]string)}
 	}
+
 }
 
-func handleCorrectAnswerLine(line string, q *Question) (string, bool) {
+func handleCorrectAnswerLine(line string, q *Question) (*Question, string, bool) {
 	if strings.HasPrefix(line, "*") {
 		line = strings.TrimPrefix(line, "*") // this line is the correct answer...
-		answerKey := string(line[0])         // Get the first character of the line as the answer key
-		q.Answer = answerKey
-		return line, true
+		q.AnswerKey = string(line[0])        // Get the first character of the line as the answer key
+		q.Answer = q.AnswerKey
+		return q, line, true
 	}
-	return line, false
+	return q, line, false
 }
 
 func handleEndOfQuestion(line string, q *Question, questions *[]Question) bool {
@@ -229,9 +232,9 @@ func handleAnswerLine(line string, q *Question, lastOptionRune *rune) {
 				lowerLine := strings.ToLower(line)
 				for _, prefix := range prefixes {
 					if strings.HasPrefix(lowerLine, prefix) {
-						answerKey := strings.Fields(strings.TrimPrefix(lowerLine, prefix))[0]
+						q.AnswerKey = strings.Fields(strings.TrimPrefix(lowerLine, prefix))[0]
 						for key := range q.Options {
-							if strings.ToLower(key[0:1]) == strings.ToLower(answerKey[0:1]) {
+							if strings.ToLower(key[0:1]) == strings.ToLower(q.AnswerKey[0:1]) {
 								q.Answer = key
 								break
 							}
@@ -245,9 +248,9 @@ func handleAnswerLine(line string, q *Question, lastOptionRune *rune) {
 			case 1:
 				if q.Type != "WR" {
 					q.Type = "TF"
-					answerKey := string(*lastOptionRune + 1)
-					q.Options[answerKey] = line
-					q.Answer = answerKey
+					q.AnswerKey = string(*lastOptionRune + 1)
+					q.Options[q.AnswerKey] = line
+					q.Answer = q.AnswerKey
 				}
 			default:
 				q.Type = "MC"
