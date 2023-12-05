@@ -14,7 +14,7 @@ It trades extra formatting in Word for a few features available in other program
 ### Table of Contents
 - [Preformatting Requirements](#preformatting-requirements)
 - [Example of Accepted Inputs](#example-of-accepted-inputs)
-    - [v1.54 Sample Data](#v1.54-sample-data)
+    - [v1.54 Sample Data](#v154-sample-data)
   - [Prefixes for Answers](#prefixes-for-answers) 
   - [Prefixes for Options](#prefixes-for-options)
   - [Table Formatting](#table-formatting) 
