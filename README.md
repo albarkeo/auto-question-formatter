@@ -14,7 +14,7 @@ It trades extra formatting in Word for a few features available in other program
 ### Table of Contents
 - [Preformatting Requirements](#preformatting-requirements)
 - [Example of Accepted Inputs](#example-of-accepted-inputs)
-    - [v1.54 Sample Data](#v154-sample-data)
+    - [v1.54+ Sample Data](#sample-data)
   - [Prefixes for Answers](#prefixes-for-answers) 
   - [Prefixes for Options](#prefixes-for-options)
   - [Table Formatting](#table-formatting) 
@@ -43,6 +43,8 @@ Local version (v1.55)
 
      
 **Please Note** - On Windows 10 and older versions of command line, multi-line paste does not appear to work directly from the Github copy button. It does work with a drag and select copy paste.
+
+#### Sample Data
 
 <br>
 
