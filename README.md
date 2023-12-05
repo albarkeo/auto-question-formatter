@@ -9,7 +9,9 @@ It currently supports:
 
 It trades extra formatting in Word for a few features available in other programs such as Respondus and Brightspace's own quiz converter: https://community.d2l.com/brightspace/kb/articles/4161-quiz-question-converter
 
-# Table of Contents
+---
+
+### Table of Contents
 - [Preformatting Requirements](##preformatting-requirements)
 - [Example of Accepted Inputs](##example-of-accepted-inputs)
     - [v1.54 Sample Data](##v1.54-sample-data)
@@ -19,16 +21,27 @@ It trades extra formatting in Word for a few features available in other program
   - [Feedback](###feedback) 
 - [Example Output](##example-output) 
 
-See a text-only version (v1.51) here https://go.dev/play/p/FTMU7afwqd-, 
+---
 
 ## Preformatting Requirements
-Add a "---" or "+++" between each question, or have each question numbered sequentially (v1.54) '1. , 2. , 3.' etc 
+Add a "---" or "+++" between each question, or have each question numbered sequentially (v1.54+) '1. , 2. , 3.' etc 
 
 ## Example of Accepted Inputs
 Use the following sample inputs as a test in the text-only version (v1.51) here (https://go.dev/play/p/FTMU7afwqd-) or with the latest version of the program.
 
-Online version (limited): Copy in Questions, press run, then you can copy the output and use Text to Columns in Excel using commas as the delimiter
-.exe version: Download the .exe, install and run, follow the text prompts. 
+Online version (limited): 
+    1. Copy in Questions
+    2. Press run
+    3. Copy the output to Excel or equivalent
+    4. Use Text to Columns in Excel with commas as the delimiter
+
+Local version (v1.55)
+     1. Download the .exe
+     2. Install and run
+     3. Follow the text prompts
+     4. The program will automatically close on success and generate the .csv in the file location of the program
+
+     
 **Please Note** - On Windows 10 and older versions of command line, multi-line paste does not appear to work directly from the Github copy button. It does work with a drag and select copy paste.
 
 <br>
@@ -45,6 +58,7 @@ a. Sydney
 b. Melbourne
 *c. Canberra
 d. Adelaide
+@Feedback goes here
 +++
 
 What is the capital of Australia?
@@ -71,8 +85,9 @@ Write this as a number. 7 tens of thousands, 4 hundreds and 2 ones	70402 or 70 4
 16 + 7 =	23
 ---
 24 + 5 =	29
+@Feedback goes here
 ---
-628 - 284 =  344
+628 - 284 =  344     @Feedback goes here
 ---
 The Earth is the only planet in our solar system with liquid water on its surface. 	False
 ---
@@ -259,7 +274,7 @@ The following characters can be identified as part of the list option prefixes:
 ```
 
 ### Feedback
-Type the "@" symbol at the start of your sentence at the end of a question
+Type the "@" symbol at the start of your sentence at the end of a question (v1.55+)
 ```
 Question example text
 @Here's some feedback
