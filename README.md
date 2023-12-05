@@ -9,15 +9,27 @@ It currently supports:
 
 It trades extra formatting in Word for a few features available in other programs such as Respondus and Brightspace's own quiz converter: https://community.d2l.com/brightspace/kb/articles/4161-quiz-question-converter
 
-It is limited to focusing on the main bulk of question types we receive.
+# Table of Contents
+- [Preformatting Requirements](##preformatting-requirements)
+- [Example of Accepted Inputs](##example-of-accepted-inputs)
+    - [v1.54 Sample Data](##v1.54-sample-data)
+  - [Prefixes for Answers](###prefixes-for-answers) 
+  - [Prefixes for Options](###prefixes-for-options)
+  - [Table Formatting](###table-formatting) 
+  - [Feedback](###feedback) 
+- [Example Output](##example-output) 
 
-See a text-only version (v1.51) here https://go.dev/play/p/FTMU7afwqd-, (Copy in Questions, press run, then you can copy the output and use Text to Columns in Excel using commas as the delimiter)
+See a text-only version (v1.51) here https://go.dev/play/p/FTMU7afwqd-, 
 
 ## Preformatting Requirements
 Add a "---" or "+++" between each question, or have each question numbered sequentially (v1.54) '1. , 2. , 3.' etc 
 
 ## Example of Accepted Inputs
-Use the following sample inputs as a test in the text converter (https://go.dev/play/p/FTMU7afwqd-) or with the latest version of the program (download the .exe, install and run, follow the text prompts)
+Use the following sample inputs as a test in the text-only version (v1.51) here (https://go.dev/play/p/FTMU7afwqd-) or with the latest version of the program.
+
+Online version (limited): Copy in Questions, press run, then you can copy the output and use Text to Columns in Excel using commas as the delimiter
+.exe version: Download the .exe, install and run, follow the text prompts. 
+**Please Note** - On Windows 10 and older versions of command line, multi-line paste does not appear to work directly from the Github copy button. It does work with a drag and select copy paste.
 
 <br>
 
@@ -113,7 +125,8 @@ true
 ---
 ```
 
-### Also works copying from a table formatted like this:
+### Table Formatting
+Also works copying from a table formatted like this:
 
 |Question|Acceptable answers| |
 |----|----|----|
@@ -245,6 +258,13 @@ The following characters can be identified as part of the list option prefixes:
 " -"
 ```
 
+### Feedback
+Type the "@" symbol at the start of your sentence at the end of a question
+```
+Question example text
+@Here's some feedback
+```
+
 ### Blank Lines and Tabbed Variations
 The program will ignore empty lines breaks and remove double spacing.
 
@@ -264,6 +284,8 @@ e.g.
 ```
 What colour is the sky?  Azure or blue; orange; light blue or sky blue
 ```
+
+See [Table Formatting](###table-formatting) for more.
 
 ## Example Output
 <details>
