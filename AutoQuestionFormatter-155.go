@@ -22,6 +22,7 @@ type Question struct {
 	ID        int
 	OptionKey string
 	AnswerKey string
+	Feedback  string
 }
 
 var removeListPrefixes = true // Change this to false if you want to keep the prefixes
@@ -57,8 +58,7 @@ func main() {
 	lineCount := 0
 	// Loop through the lines
 
-	for i, line := range lines {
-		fmt.Printf("Processing line %d: %s\n", i, line) // Debugging line
+	for _, line := range lines {
 
 		line = processLine(line)
 		if line == "" {
@@ -66,7 +66,6 @@ func main() {
 		}
 
 		if handleNewQuestion(line, &q, &questions, &questionNumber) {
-			fmt.Println("Started new question") // Debugging line
 			lineCount++
 			continue
 		}
@@ -74,7 +73,6 @@ func main() {
 		lineCount++
 
 		if handleEndOfQuestion(line, &q, &questions) {
-			fmt.Println("Ended question") // Debugging line
 			lineCount = 0
 			continue
 		}
@@ -84,7 +82,6 @@ func main() {
 		q, line, _ := handleCorrectAnswerLine(line, &q)
 
 		if handleOption(line, q, &lastOptionRune) {
-			fmt.Println("Handled option") // Debugging line
 			continue
 		}
 
@@ -92,12 +89,12 @@ func main() {
 
 		handleAnswerLine(line, q, &lastOptionRune)
 
-		fmt.Printf("Current question after processing line %d: %+v\n", i, q) // Debugging line
+		handleFeedback(line, q)
+
 	}
 
 	// Add the last question
 	if q.Text != "" {
-		fmt.Println("Adding last question") // Debugging line
 		questions = append(questions, q)
 	}
 
@@ -165,9 +162,8 @@ func handleCorrectAnswerLine(line string, q *Question) (*Question, string, bool)
 
 func handleEndOfQuestion(line string, q *Question, questions *[]Question) bool {
 	if strings.HasSuffix(line, "+++") || strings.HasSuffix(line, "---") {
-		if q.Text != "" && len(q.Options) > 0 {
+		if q.Text != "" {
 			*questions = append(*questions, *q)
-			*q = Question{Options: make(map[string]string)}
 		}
 		// Reset the question
 		*q = Question{Options: make(map[string]string)}
@@ -196,6 +192,10 @@ func handleNewQuestion(line string, q *Question, questions *[]Question, question
 }
 
 func handleQuestionTextLine(line string, q *Question, lineCount int) {
+	if strings.HasPrefix(line, "@") {
+		return
+	}
+
 	if lineCount == 1 {
 		if q.Text == "" {
 			q.Text = line
@@ -222,9 +222,11 @@ func handleOption(line string, q *Question, lastOptionRune *rune) bool {
 		return true
 	}
 	// If the line is not an option and the question type is not already set, set it to 'WR'
-	if q.Type == "" && line != "" {
+	if q.Type == "" && line != "" && !strings.HasPrefix(line, "@") {
 		q.Type = "WR"
+		q.Text = line
 	}
+
 	return false
 }
 
@@ -284,11 +286,6 @@ func processQuestionType(questions *[]Question, lastOptionRune *rune) {
 		default:
 			(*questions)[i].Type = "MC"
 		}
-		// if q.Type != "WR" {
-		// 	q.AnswerKey = string(*lastOptionRune + 1)
-		// 	q.Options[q.AnswerKey] = line
-		// 	q.Answer = q.AnswerKey
-		// }
 	}
 }
 
@@ -309,6 +306,14 @@ func isValidListItemDelimiter(s string) (string, int) {
 		}
 	}
 	return "", -1
+}
+
+func handleFeedback(line string, q *Question) {
+	if strings.HasPrefix(line, "@") {
+		feedback := strings.TrimSpace(strings.TrimPrefix(line, "@"))
+		q.Feedback = feedback
+		return
+	}
 }
 
 func printQuestions(questions []Question, prefixes []string) {
@@ -374,7 +379,8 @@ func printQuestions(questions []Question, prefixes []string) {
 		}
 
 		fmt.Println("Hint,")
-		fmt.Println("Feedback,")
+		fmt.Printf("Feedback,%s\n", q.Feedback)
+
 	}
 }
 
@@ -464,7 +470,7 @@ func writeQuestionsToCSV(questions []Question, prefixes []string) {
 			}
 
 			writer.Write([]string{"Hint"})
-			writer.Write([]string{"Feedback"})
+			writer.Write([]string{"Feedback", q.Feedback})
 
 			// Add an empty line after each question
 			writer.Write([]string{""})
