@@ -12,14 +12,14 @@ It trades extra formatting in Word for a few features available in other program
 ---
 
 ### Table of Contents
-- [Preformatting Requirements](##preformatting-requirements)
-- [Example of Accepted Inputs](##example-of-accepted-inputs)
-    - [v1.54 Sample Data](##v1.54-sample-data)
-  - [Prefixes for Answers](###prefixes-for-answers) 
-  - [Prefixes for Options](###prefixes-for-options)
-  - [Table Formatting](###table-formatting) 
-  - [Feedback](###feedback) 
-- [Example Output](##example-output) 
+- [Preformatting Requirements](#preformatting-requirements)
+- [Example of Accepted Inputs](#example-of-accepted-inputs)
+    - [v1.54 Sample Data](#v1.54-sample-data)
+  - [Prefixes for Answers](#prefixes-for-answers) 
+  - [Prefixes for Options](#prefixes-for-options)
+  - [Table Formatting](#table-formatting) 
+  - [Feedback](#feedback) 
+- [Example Output](#example-output) 
 
 ---
 
