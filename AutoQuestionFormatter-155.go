@@ -57,13 +57,16 @@ func main() {
 	lineCount := 0
 	// Loop through the lines
 
-	for _, line := range lines {
+	for i, line := range lines {
+		fmt.Printf("Processing line %d: %s\n", i, line) // Debugging line
+
 		line = processLine(line)
 		if line == "" {
 			continue
 		}
 
 		if handleNewQuestion(line, &q, &questions, &questionNumber) {
+			fmt.Println("Started new question") // Debugging line
 			lineCount++
 			continue
 		}
@@ -71,6 +74,7 @@ func main() {
 		lineCount++
 
 		if handleEndOfQuestion(line, &q, &questions) {
+			fmt.Println("Ended question") // Debugging line
 			lineCount = 0
 			continue
 		}
@@ -79,18 +83,25 @@ func main() {
 
 		q, line, _ := handleCorrectAnswerLine(line, &q)
 
-		handleOptionLine(line, q, &lastOptionRune)
+		if handleOption(line, q, &lastOptionRune) {
+			fmt.Println("Handled option") // Debugging line
+			continue
+		}
 
 		handleTabSeparatedLine(line, q, &questions)
 
+		handleAnswerLine(line, q, &lastOptionRune)
+
+		fmt.Printf("Current question after processing line %d: %+v\n", i, q) // Debugging line
 	}
 
 	// Add the last question
 	if q.Text != "" {
+		fmt.Println("Adding last question") // Debugging line
 		questions = append(questions, q)
 	}
 
-	processConvertQuestions(&questions)
+	processQuestionType(&questions, &lastOptionRune)
 
 	printQuestions(questions, prefixes)
 
@@ -98,6 +109,7 @@ func main() {
 
 	fmt.Println()
 	fmt.Println("Success! CSV file saved to location of this program")
+
 }
 
 func readInput(reader *bufio.Reader) string {
@@ -165,14 +177,14 @@ func handleEndOfQuestion(line string, q *Question, questions *[]Question) bool {
 }
 
 func handleNewQuestion(line string, q *Question, questions *[]Question, questionNumber *int) bool {
-	if strings.HasPrefix(line, strconv.Itoa(*questionNumber)) {
+	if strings.HasPrefix(line, strconv.Itoa(*questionNumber)+".") {
 		if q.Text != "" && len(q.Options) > 0 {
 			*questions = append(*questions, *q)
 		}
 		*q = Question{Options: make(map[string]string)}
 
 		// Remove the question number, '.' and any leading white space from the line
-		questionLineNoNumber := strings.TrimSpace(strings.TrimPrefix(strings.TrimPrefix(line, strconv.Itoa(*questionNumber)), "."))
+		questionLineNoNumber := strings.TrimSpace(strings.TrimPrefix(line, strconv.Itoa(*questionNumber)+"."))
 
 		// Assign the formatted line to q.Text
 		q.Text = questionLineNoNumber
@@ -191,75 +203,58 @@ func handleQuestionTextLine(line string, q *Question, lineCount int) {
 	}
 }
 
-func handleOptionLine(line string, q *Question, lastOptionRune *rune) bool {
-	if len(line) > 1 && isValidCharacter(strings.ToLower(string(line[0]))) {
-		delimiter, optionStartIndex := isValidListItemDelimiter(line[1:])
-		if delimiter != "" {
-			q.OptionKey = string(line[0])
-			q.Options[q.OptionKey] = strings.TrimSpace(line[optionStartIndex+1:])
-			if *lastOptionRune < rune(q.OptionKey[0]) {
-				*lastOptionRune = rune(q.OptionKey[0])
-			}
-			return true
+func handleOption(line string, q *Question, lastOptionRune *rune) bool {
+	// Define a regular expression that matches the option line
+	optionRegex := regexp.MustCompile(`^([a-zA-Z])[\).\s-]+(.*)$`)
+	matches := optionRegex.FindStringSubmatch(line)
+	// Check if the line is 'true' or 'false'
+	if strings.ToLower(line) == "true" || strings.ToLower(line) == "false" || strings.ToLower(line) == "t" || strings.ToLower(line) == "f" {
+		q.Options[line] = line
+		return true
+	}
+	// If the line matches the regular expression, handle it as an option
+	if matches != nil {
+		q.OptionKey = matches[1]
+		q.Options[q.OptionKey] = strings.TrimSpace(matches[2])
+		if *lastOptionRune < rune(q.OptionKey[0]) {
+			*lastOptionRune = rune(q.OptionKey[0])
 		}
+		return true
+	}
+	// If the line is not an option and the question type is not already set, set it to 'WR'
+	if q.Type == "" && line != "" {
+		q.Type = "WR"
 	}
 	return false
 }
 
 func handleAnswerLine(line string, q *Question, lastOptionRune *rune) {
-	// If line is not a question or an option, it must be an answer
-	if len(q.Options) == 0 {
-		q.Options["1"] = line
-		q.Type = "WR"
-	} else {
-		// Check if line is an option
-		if len(line) > 1 && isValidCharacter(strings.ToLower(string(line[0:1]))) && (line[1] == ')' || line[1] == '.') {
-			q.OptionKey = string(line[0])
-			q.Options[q.OptionKey] = strings.TrimSpace(line[2:])
-			if *lastOptionRune < rune(q.OptionKey[0]) {
-				*lastOptionRune = rune(q.OptionKey[0])
+	// Check if line is a single character answer
+	if len(line) == 1 { // Check if line is only one character long
+		for key := range q.Options {
+			if strings.ToLower(key[0:1]) == strings.ToLower(line[0:1]) {
+				q.Answer = key
+				break
 			}
-		} else {
-			// Check if line is a single character answer
-			if len(line) == 1 { // Check if line is only one character long
+		}
+	} else {
+		lowerLine := strings.ToLower(line)
+		for _, prefix := range prefixes {
+			if strings.HasPrefix(lowerLine, prefix) {
+				q.AnswerKey = strings.Fields(strings.TrimPrefix(lowerLine, prefix))[0]
 				for key := range q.Options {
-					if strings.ToLower(key[0:1]) == strings.ToLower(line[0:1]) {
+					if strings.ToLower(key[0:1]) == strings.ToLower(q.AnswerKey[0:1]) {
 						q.Answer = key
 						break
 					}
 				}
-			} else {
-				lowerLine := strings.ToLower(line)
-				for _, prefix := range prefixes {
-					if strings.HasPrefix(lowerLine, prefix) {
-						q.AnswerKey = strings.Fields(strings.TrimPrefix(lowerLine, prefix))[0]
-						for key := range q.Options {
-							if strings.ToLower(key[0:1]) == strings.ToLower(q.AnswerKey[0:1]) {
-								q.Answer = key
-								break
-							}
-						}
-						break
-					}
-				}
-			}
-
-			switch len(q.Options) {
-			case 1:
-				if q.Type != "WR" {
-					q.Type = "TF"
-					q.AnswerKey = string(*lastOptionRune + 1)
-					q.Options[q.AnswerKey] = line
-					q.Answer = q.AnswerKey
-				}
-			default:
-				q.Type = "MC"
+				break
 			}
 		}
 	}
 }
 
-func processConvertQuestions(questions *[]Question) {
+func processQuestionType(questions *[]Question, lastOptionRune *rune) {
 	for i, q := range *questions {
 		switch len(q.Options) {
 		case 0:
@@ -289,6 +284,11 @@ func processConvertQuestions(questions *[]Question) {
 		default:
 			(*questions)[i].Type = "MC"
 		}
+		// if q.Type != "WR" {
+		// 	q.AnswerKey = string(*lastOptionRune + 1)
+		// 	q.Options[q.AnswerKey] = line
+		// 	q.Answer = q.AnswerKey
+		// }
 	}
 }
 
