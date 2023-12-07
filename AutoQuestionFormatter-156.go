@@ -90,17 +90,17 @@ func main() {
 
 		q, line, _ := handleCorrectAnswerLine(line, &q)
 
-		lastOptionRune, ok := handleFirstOption(line, q)
+		ok := handleFirstOption(line, q, &lastOptionRune)
 		if ok {
 			continue
 		}
-		if handleAdditionalOptions(line, q, lastOptionRune) {
+		if handleAdditionalOptions(line, q, &lastOptionRune) {
 			continue
 		}
 
 		handleTabSeparatedLine(line, q, &questions)
 
-		handleAnswerLine(line, q, lastOptionRune)
+		handleAnswerLine(line, q)
 
 		handleFeedback(line, q)
 
@@ -217,40 +217,65 @@ func handleQuestionTextLine(line string, q *Question, lineCount *int) {
 	}
 }
 
-func handleFirstOption(line string, q *Question) (*rune, bool) {
-	// Check if the line is 'true' or 'false'
+func handleFirstOption(line string, q *Question, lastOptionRune *rune) bool {
 	if strings.ToLower(line) == "true" || strings.ToLower(line) == "false" || strings.ToLower(line) == "t" || strings.ToLower(line) == "f" {
 		q.Options[line] = line
-		return nil, true
+		return true
 	}
 
 	if (q.Type == "" || q.Type == "WR") && !strings.HasPrefix(line, "@") && line != q.Text {
-		delimiter, length := isValidListItemDelimiter(line)
-		if delimiter != "" && isValidCharacter(line[length:]) {
-			q.Type = "MC" // Set the question type to Multiple Choice
-			q.OptionKey = line[:length]
-			q.Options[q.OptionKey] = line[length:]
-			lastOptionRune := rune(q.OptionKey[0])
-			return &lastOptionRune, true
+		fmt.Println("handleFirstOption called with line:", line)
+		if len(line) > 0 && isValidCharacter(string(line[0])) {
+			delimiter, length := isValidListItemDelimiter(line[1:])
+			fmt.Println("isValidListItemDelimiter returned delimiter:", delimiter, "and length:", length)
+			if delimiter != "" {
+				fmt.Println("option processing", line)
+				q.Type = "MC"
+				q.OptionKey = string(line[0])
+				q.Options[q.OptionKey] = line[1+length:]
+				*lastOptionRune = rune(line[0])
+				return true
+			}
 		}
-	}
-	return nil, false
-}
 
-func handleAdditionalOptions(line string, q *Question, lastOptionRune *rune) bool {
-	delimiter, length := isValidListItemDelimiter(line)
-	if delimiter != "" && isValidCharacter(line[length:]) && rune(line[0]) == *lastOptionRune+1 {
-		q.OptionKey = line[:1]
-		q.Options[q.OptionKey] = line[length:]
-		if lastOptionRune != nil && *lastOptionRune < rune(q.OptionKey[0]) {
-			*lastOptionRune = rune(q.OptionKey[0])
+		// Check if the line is an option and answer for a Short Answer question
+		hasPrefix := false
+		for _, prefix := range prefixes {
+			if strings.HasPrefix(strings.ToLower(line), prefix) {
+				hasPrefix = true
+				break
+			}
 		}
-		return true
+		if !hasPrefix || len(line) == 1 {
+			q.Options[line] = line
+			return true
+		}
 	}
 	return false
 }
 
-func handleAnswerLine(line string, q *Question, lastOptionRune *rune) {
+func handleAdditionalOptions(line string, q *Question, lastOptionRune *rune) bool {
+	fmt.Println("handleAdditionalOptions called with line:", line)
+	fmt.Println(lastOptionRune)
+	if lastOptionRune != nil && len(line) > 0 && isValidCharacter(string(line[0])) {
+		delimiter, length := isValidListItemDelimiter(line[1:])
+		fmt.Println("isValidListItemDelimiter returned delimiter:", delimiter, "and length:", length)
+		fmt.Println("Before if statement, lastOptionRune:", string(*lastOptionRune)) // print lastOptionRune before the if statement
+		if delimiter != "" && rune(line[0]) == *lastOptionRune+1 {
+			fmt.Println("multi-option processing", line)
+			q.OptionKey = string(line[0])
+			q.Options[q.OptionKey] = line[1+length:]
+			if *lastOptionRune < rune(q.OptionKey[0]) {
+				*lastOptionRune = rune(q.OptionKey[0])
+			}
+			fmt.Println("After if statement, lastOptionRune:", string(*lastOptionRune)) // print lastOptionRune after the if statement
+			return true
+		}
+	}
+	return false
+}
+
+func handleAnswerLine(line string, q *Question) {
 	// Check if line is a single character answer
 	if len(line) == 1 { // Check if line is only one character long
 		for key := range q.Options {
@@ -319,7 +344,7 @@ func isValidCharacter(s string) bool {
 }
 
 func isValidListItemDelimiter(s string) (string, int) {
-	validDelimiters := []string{") ", ". ", "- ", " - ", "). ", ")."}
+	validDelimiters := []string{")", ") ", ". ", "- ", " - ", "). ", ")."}
 	for _, delimiter := range validDelimiters {
 		if strings.HasPrefix(s, delimiter) {
 			return delimiter, len(delimiter)

@@ -1,0 +1,243 @@
+NewQuestion,MC
+ID
+Title
+QuestionText,What is the capital of Australia?
+Points
+Difficulty
+Image
+Option,0,Sydney
+Option,0,Melbourne
+Option,100,Canberra
+Option,0,Adelaide
+Hint
+Feedback,Feedback goes here
+
+NewQuestion,MC
+ID
+Title
+QuestionText,What is the capital of Australia?
+Points
+Difficulty
+Image
+Option,0,Sydney
+Option,0,Melbourne
+Option,100,Canberra
+Option,0,Adelaide
+Hint
+Feedback,
+
+NewQuestion,SA
+ID
+Title
+QuestionText,What colour is the sky?
+Points
+Difficulty
+Image
+Answer,100,Azure
+Answer,100,blue
+Answer,100,orange
+Hint
+Feedback,
+
+NewQuestion,SA
+ID
+Title
+QuestionText,Write the value of the 5 in the number 8526.
+Points
+Difficulty
+Image
+Answer,100,500
+Hint
+Feedback,
+
+NewQuestion,SA
+ID
+Title
+QuestionText,Write the value of the 7 in the number 97 450.
+Points
+Difficulty
+Image
+Answer,100,7000
+Answer,100,7 000
+Answer,100,"7,000"
+Hint
+Feedback,
+
+NewQuestion,SA
+ID
+Title
+QuestionText,"Write this as a number. 7 tens of thousands, 4 hundreds and 2 ones"
+Points
+Difficulty
+Image
+Answer,100,70402
+Answer,100,70 402
+Answer,100,"70,402"
+Hint
+Feedback,
+
+NewQuestion,SA
+ID
+Title
+QuestionText,9 + 6 =
+Points
+Difficulty
+Image
+Answer,100,15
+Hint
+Feedback,
+
+NewQuestion,SA
+ID
+Title
+QuestionText,16 + 7 =
+Points
+Difficulty
+Image
+Answer,100,23
+Hint
+Feedback,
+
+NewQuestion,SA
+ID
+Title
+QuestionText,24 + 5 =
+Points
+Difficulty
+Image
+Answer,100,29
+Hint
+Feedback,Feedback goes here
+
+NewQuestion,WR
+ID
+Title
+QuestionText,628 - 284 = 344 @Feedback goes here
+Points
+Difficulty
+Image
+InitialText
+AnswerKey
+NewQuestion,TF
+ID
+Title
+QuestionText,The Earth is the only planet in our solar system with liquid water on its surface.
+Points
+Difficulty
+Image
+TRUE,0
+FALSE,100
+Hint
+Feedback,
+
+NewQuestion,WR
+ID
+Title
+QuestionText,What is the colour of grass?
+Points
+Difficulty
+Image
+InitialText
+AnswerKey
+NewQuestion,SA
+ID
+Title
+QuestionText,Short answer no question mark
+Points
+Difficulty
+Image
+Answer,100,a short answer
+Hint
+Feedback,
+
+NewQuestion,MC
+ID
+Title
+QuestionText,Which planet is known as the Red Planet?
+Points
+Difficulty
+Image
+Option,0," Venus"
+Option,100," Mars"
+Option,0," Jupiter"
+Option,0," Saturn"
+Hint
+Feedback,
+
+NewQuestion,TF
+ID
+Title
+QuestionText,Mars is known as the Red Planet
+Points
+Difficulty
+Image
+TRUE,0
+FALSE,100
+Hint
+Feedback,
+
+NewQuestion,TF
+ID
+Title
+QuestionText,Venus is known as the Red Planet
+Points
+Difficulty
+Image
+TRUE,0
+FALSE,100
+Hint
+Feedback,
+
+NewQuestion,TF
+ID
+Title
+QuestionText,Jupiter is known as the Red Planet
+Points
+Difficulty
+Image
+TRUE,0
+FALSE,100
+Hint
+Feedback,
+
+NewQuestion,MC
+ID
+Title
+QuestionText,"Who wrote the novel ""Pride and Prejudice""?"
+Points
+Difficulty
+Image
+Option,0," Charles Dickens"
+Option,100," Jane Austen"
+Option,0," Mark Twain"
+Option,0," George Orwell"
+Hint
+Feedback,
+
+NewQuestion,MC
+ID
+Title
+QuestionText,What is the square root of 81?
+Points
+Difficulty
+Image
+Option,0,8
+Option,100,9
+Option,0,10
+Option,0,11
+Option,0,999
+Hint
+Feedback,
+
+NewQuestion,TF
+ID
+Title
+QuestionText,"True or false, this has been a difficult but rewarding process"
+Points
+Difficulty
+Image
+TRUE,0
+FALSE,100
+Hint
+Feedback,
+
