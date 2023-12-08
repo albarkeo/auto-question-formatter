@@ -20,6 +20,7 @@ type Question struct {
 	Options   map[string]string
 	Answer    string
 	ID        int
+	Image     string
 	OptionKey string
 	AnswerKey string
 	Feedback  string
@@ -87,6 +88,10 @@ func main() {
 		}
 
 		handleQuestionTextLine(line, &q, &lineCount)
+
+		if handleImages(line, &q) {
+			continue
+		}
 
 		q, line, _ := handleCorrectAnswerLine(line, &q)
 
@@ -217,22 +222,38 @@ func handleQuestionTextLine(line string, q *Question, lineCount *int) {
 	}
 }
 
+func handleImages(line string, q *Question) bool {
+	if strings.HasPrefix(line, "[[") && strings.HasSuffix(line, "]]") {
+		q.Image = strings.Trim(line, "[]")
+		return true
+	}
+	return false
+}
+
 func handleFirstOption(line string, q *Question, lastOptionRune *rune) bool {
+
+	for _, prefix := range prefixes {
+		lowerLine := strings.ToLower(line)
+		if strings.HasPrefix(lowerLine, prefix) {
+			line = strings.TrimPrefix(lowerLine, prefix)
+		}
+	}
+
 	if strings.ToLower(line) == "true" || strings.ToLower(line) == "false" || strings.ToLower(line) == "t" || strings.ToLower(line) == "f" {
 		q.Options[line] = line
+		q.AnswerKey = line
+		q.Answer = line
 		return true
 	}
 
 	if (q.Type == "" || q.Type == "WR") && !strings.HasPrefix(line, "@") && line != q.Text {
-		fmt.Println("handleFirstOption called with line:", line)
+
 		if len(line) > 0 && isValidCharacter(string(line[0])) {
 			delimiter, length := isValidListItemDelimiter(line[1:])
-			fmt.Println("isValidListItemDelimiter returned delimiter:", delimiter, "and length:", length)
 			if delimiter != "" {
-				fmt.Println("option processing", line)
 				q.Type = "MC"
 				q.OptionKey = string(line[0])
-				q.Options[q.OptionKey] = line[1+length:]
+				q.Options[q.OptionKey] = strings.TrimSpace(line[1+length:]) // Trim spaces from the option text
 				*lastOptionRune = rune(line[0])
 				return true
 			}
@@ -242,6 +263,7 @@ func handleFirstOption(line string, q *Question, lastOptionRune *rune) bool {
 		hasPrefix := false
 		for _, prefix := range prefixes {
 			if strings.HasPrefix(strings.ToLower(line), prefix) {
+				line = strings.TrimPrefix(line, prefix)
 				hasPrefix = true
 				break
 			}
@@ -255,20 +277,14 @@ func handleFirstOption(line string, q *Question, lastOptionRune *rune) bool {
 }
 
 func handleAdditionalOptions(line string, q *Question, lastOptionRune *rune) bool {
-	fmt.Println("handleAdditionalOptions called with line:", line)
-	fmt.Println(lastOptionRune)
 	if lastOptionRune != nil && len(line) > 0 && isValidCharacter(string(line[0])) {
 		delimiter, length := isValidListItemDelimiter(line[1:])
-		fmt.Println("isValidListItemDelimiter returned delimiter:", delimiter, "and length:", length)
-		fmt.Println("Before if statement, lastOptionRune:", string(*lastOptionRune)) // print lastOptionRune before the if statement
 		if delimiter != "" && rune(line[0]) == *lastOptionRune+1 {
-			fmt.Println("multi-option processing", line)
 			q.OptionKey = string(line[0])
-			q.Options[q.OptionKey] = line[1+length:]
+			q.Options[q.OptionKey] = strings.TrimSpace(line[1+length:]) // Trim spaces from the option text
 			if *lastOptionRune < rune(q.OptionKey[0]) {
 				*lastOptionRune = rune(q.OptionKey[0])
 			}
-			fmt.Println("After if statement, lastOptionRune:", string(*lastOptionRune)) // print lastOptionRune after the if statement
 			return true
 		}
 	}
@@ -365,12 +381,18 @@ func printQuestions(questions []Question, prefixes []string) {
 	for _, q := range questions {
 		fmt.Println()
 		fmt.Printf("NewQuestion,%s\n", q.Type)
-		fmt.Printf("ID,%d\n", q.ID)
+		if q.ID != 0 {
+			fmt.Printf("ID,%d\n", q.ID)
+		} else {
+			fmt.Println("ID,")
+		}
 		fmt.Println("Title,")
 		fmt.Printf("QuestionText,%s\n", q.Text)
 		fmt.Println("Points,")
 		fmt.Println("Difficulty,")
-		fmt.Println("Image,")
+		if q.Image != "" {
+			fmt.Printf("Image,images/%s\n", q.Image)
+		}
 
 		var keys []string
 		for k := range q.Options {
@@ -392,7 +414,8 @@ func printQuestions(questions []Question, prefixes []string) {
 				}
 			}
 		} else if q.Type == "TF" {
-			if strings.ToLower(q.Answer) == "true" || strings.ToLower(q.Answer) == "t" {
+			q.Answer = strings.TrimSpace(q.Answer)
+			if strings.ToLower(q.Answer) == "true" || strings.ToLower(q.Answer) == "t" || strings.ToLower(q.Answer) == "true true" {
 				fmt.Println("TRUE,100")
 				fmt.Println("FALSE,0")
 			} else {
@@ -452,12 +475,19 @@ func writeQuestionsToCSV(questions []Question, prefixes []string) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		writer.Write([]string{"ID"})
+		if q.ID != 0 {
+			writer.Write([]string{"ID", fmt.Sprintf("%d", q.ID)})
+		} else {
+			writer.Write([]string{"ID", ""})
+		}
+
 		writer.Write([]string{"Title"})
 		writer.Write([]string{"QuestionText", q.Text})
 		writer.Write([]string{"Points"})
 		writer.Write([]string{"Difficulty"})
-		writer.Write([]string{"Image"})
+		if q.Image != "" {
+			writer.Write([]string{"Image", "images/" + q.Image})
+		}
 		if q.Type == "WR" {
 			writer.Write([]string{"InitialText"})
 			writer.Write([]string{"AnswerKey"})
@@ -483,7 +513,8 @@ func writeQuestionsToCSV(questions []Question, prefixes []string) {
 					}
 				}
 			} else if q.Type == "TF" {
-				if strings.ToLower(q.Answer) == "true" || strings.ToLower(q.Answer) == "t" {
+				q.Answer = strings.TrimSpace(q.Answer)
+				if strings.ToLower(q.Answer) == "true" || strings.ToLower(q.Answer) == "t" || strings.ToLower(q.Answer) == "true true" {
 					writer.Write([]string{"TRUE", "100"})
 					writer.Write([]string{"FALSE", "0"})
 				} else {
