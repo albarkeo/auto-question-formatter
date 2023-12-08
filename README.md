@@ -13,6 +13,7 @@ It trades extra formatting in Word for a few features available in other program
 
 ### Table of Contents
 - [Preformatting Requirements](#preformatting-requirements)
+- [How to Use](#how-to-use)
 - [Example of Accepted Inputs](#example-of-accepted-inputs)
     - [v1.54+ Sample Data](#sample-data)
   - [Prefixes for Answers](#prefixes-for-answers) 
@@ -24,25 +25,28 @@ It trades extra formatting in Word for a few features available in other program
 ---
 
 ## Preformatting Requirements
-Add a "---" or "+++" between each question, or have each question numbered sequentially (v1.54+) '1. , 2. , 3.' etc 
+Add "+++" or "---" between each question, or have each question numbered sequentially (v1.54+) '1. , 2. , 3.' etc 
 
-## Example of Accepted Inputs
-Use the following sample inputs as a test in the text-only version (v1.51) here (https://go.dev/play/p/FTMU7afwqd-) or with the latest version of the program.
+## How to Use
 
 Online version (limited): 
-    1. Copy in Questions
-    2. Press run
-    3. Copy the output to Excel or equivalent
-    4. Use Text to Columns in Excel with commas as the delimiter
+1. Copy in Questions
+2. Press run
+3. Copy the output to Excel or equivalent
+4. Use Text to Columns in Excel with commas as the delimiter
+5. Save as a UTF-8 .csv file
 
-Local version (v1.55)
-     1. Download the .exe
-     2. Install and run
-     3. Follow the text prompts
-     4. The program will automatically close on success and generate the .csv in the file location of the program
+Local version (v1.55+):
+1. Download the .exe
+2. Install and run
+3. Follow the text prompts
+4. The program will automatically close on success and generate the .csv in the file location of the program
 
      
 **Please Note** - On Windows 10 and older versions of command line, multi-line paste does not appear to work directly from the Github copy button. It does work with a drag and select copy paste.
+
+## Example of Accepted Inputs
+Use the following sample inputs as a test in the text-only version (v1.51) here (https://go.dev/play/p/FTMU7afwqd-) or with the latest version of the program.
 
 #### Sample Data
 
