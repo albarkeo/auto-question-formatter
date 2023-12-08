@@ -51,7 +51,7 @@ Local version (v1.55)
 <details>
   <summary><b>Click to expand v1.54 sample inputs (text and .csv output) </b></summary>
   
-## v1.54 Sample Data
+## v1.54+ Sample Data
 
 ```
 What is the capital of Australia?
@@ -113,6 +113,7 @@ TRUE
 
 2. Venus is known as the Red Planet
 F
+@Here is some feedback about this question
 
 3. Jupiter is known as the Red Planet
 False
@@ -302,7 +303,7 @@ e.g.
 What colour is the sky?  Azure or blue; orange; light blue or sky blue
 ```
 
-See [Table Formatting](###table-formatting) for more.
+See [Table Formatting](#table-formatting) for more.
 
 ## Example Output
 <details>
