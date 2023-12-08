@@ -19,7 +19,8 @@ It trades extra formatting in Word for a few features available in other program
   - [Prefixes for Answers](#prefixes-for-answers) 
   - [Prefixes for Options](#prefixes-for-options)
   - [Table Formatting](#table-formatting) 
-  - [Feedback](#feedback) 
+  - [Feedback](#feedback)
+  - [Images](#images)
 - [Example Output](#example-output) 
 
 ---
@@ -29,21 +30,22 @@ Add "+++" or "---" between each question, or have each question numbered sequent
 
 ## How to Use
 
-Online version (limited): 
-1. Copy in Questions
-2. Press run
-3. Copy the output to Excel or equivalent
-4. Use Text to Columns in Excel with commas as the delimiter
-5. Save as a UTF-8 .csv file
-
 Local version (v1.55+):
 1. Download the .exe
 2. Install and run
 3. Follow the text prompts
 4. The program will automatically close on success and generate the .csv in the file location of the program
 
-     
 **Please Note** - On Windows 10 and older versions of command line, multi-line paste does not appear to work directly from the Github copy button. It does work with a drag and select copy paste.
+
+Online version (v1.51 limited): 
+1. Copy in Questions
+2. Press run
+3. Copy the output to Excel or equivalent
+4. Use Text to Columns in Excel with commas as the delimiter
+5. Save as a UTF-8 .csv file
+
+   <br>
 
 ## Example of Accepted Inputs
 Use the following sample inputs as a test in the text-only version (v1.51) here (https://go.dev/play/p/FTMU7afwqd-) or with the latest version of the program.
@@ -271,6 +273,8 @@ true
 The following will be removed from an answer if written in the Word document (not case sensitive):
 "answer ", "answer: ", "answer- ", "answers ", "answers: ", "answers- ", "correct answer ", "correct answer: ", "correct answer- ", "correct answers: ", "correct answers- " "*"
 
+<br>
+
 ### Prefixes for Options
 By default removeListPrefixes = true
 
@@ -285,17 +289,22 @@ The following characters can be identified as part of the list option prefixes:
 " -"
 ```
 
+<br>
+
 ### Feedback
 Type the "@" symbol at the start of your sentence at the end of a question (v1.55+)
 ```
 Question example text
 @Here's some feedback
 ```
+<br>
 
 ### Blank Lines and Tabbed Variations
 The program will ignore empty lines breaks and remove double spacing.
 
 Tabs are considered as a potential new line and therefore considered as an option or answer for the question.
+
+<br>
 
 ### Short Answer Question Type Answers
 These can be separated by the word "or" or a semicolon ";"
@@ -313,6 +322,30 @@ What colour is the sky?  Azure or blue; orange; light blue or sky blue
 ```
 
 See [Table Formatting](#table-formatting) for more.
+
+<br>
+
+### Images
+As of v1.5.6+ images can be included in the question text section by surrounding the filename with two square brackets:
+
+```
+Question text
+[[example.jpg]]
+Question answer
+```
+
+This will look for a folder inside Brightspace for a second-level folder called "images"
+
+If you would like them to reference images inside an additional folder, add that to the input text. 
+
+```
+Question text
+[[module-1/example.jpg]]
+Question answer
+```
+This will look for the file content-resources/images/module-1/example.jpg
+
+<br>
 
 ## Example Output
 <details>
