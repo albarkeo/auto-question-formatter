@@ -1,0 +1,12 @@
+NewQuestion,MC
+ID,
+Title
+QuestionText,Question text
+Points
+Difficulty
+Option,0,option a,option a feedback
+Option,0,option b,option b feedback
+Option,0,option c,option c feedback
+Hint
+Feedback,whole question feedback
+
