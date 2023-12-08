@@ -93,7 +93,7 @@ Write this as a number. 7 tens of thousands, 4 hundreds and 2 ones	70402 or 70 4
 24 + 5 =	29
 @Feedback goes here
 ---
-628 - 284 =  344     @Feedback goes here
+628 - 284 =  34    @Feedback goes here
 ---
 The Earth is the only planet in our solar system with liquid water on its surface. 	False
 ---
@@ -145,6 +145,11 @@ True or false, this has been a difficult but rewarding process
 
 true
 ---
+True or false, v1.5.6 now includes images in the questionText?
+[[example.jpg]]
+true
++++
+END
 ```
 
 ### Table Formatting
