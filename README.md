@@ -53,7 +53,7 @@ Use the following sample inputs as a test in the text-only version (v1.51) here 
 <br>
 
 <details>
-  <summary><b>Click to expand v1.54 sample inputs (text and .csv output) </b></summary>
+  <summary><b>Click to expand v1.54+ sample inputs (text and .csv output) </b></summary>
   
 ## v1.54+ Sample Data
 
