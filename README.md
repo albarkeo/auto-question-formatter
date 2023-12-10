@@ -336,7 +336,12 @@ Question text
 Question answer
 ```
 
-This will look for a folder inside Brightspace for a second-level folder called "images"
+This will look for a folder inside Brightspace for a folder inside the course called "images"
+
+e.g.
+```
+content/enforced/[YOURCOURSEID]/images
+```
 
 If you would like them to reference images inside an additional folder, add that to the input text. 
 
@@ -345,7 +350,14 @@ Question text
 [[module-1/example.jpg]]
 Question answer
 ```
-This will look for the file content-resources/images/module-1/example.jpg
+
+This will look for the file in that folder:
+
+```
+content/enforced/[YOURCOURSEID]/images/module-1/example.jpg
+```
+
+If your folder has a space in it e.g. "Module 1" currently the space will need to be replaced by the html code for space: "%20", so your image would be referenced like this: [[Module%201/example.jpg]] (I'll fix this in an update).
 
 <br>
 
