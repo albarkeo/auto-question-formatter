@@ -32,20 +32,19 @@ var removeListPrefixes = true // Change this to false if you want to keep the pr
 var prefixes = []string{"answer ", "answer: ", "answer- ", "answers ", "answers: ", "answers- ", "correct answer ", "correct answer: ", "correct answer- ", "correct answers: ", "correct answers- "}
 
 func printWelcomeMessage() {
-	fmt.Println()
-	fmt.Println()
-	fmt.Println()
-	fmt.Println("+++")
-	fmt.Println()
-	fmt.Println("Welcome to the Auto Question Formatter")
-	fmt.Println("This tool is used to convert text copied from Word or equivalent")
-	fmt.Println("It will generate a .csv file formatted for Brightspace")
-	fmt.Println("v1.5.6")
-	fmt.Println()
-	fmt.Println("+++")
-	fmt.Println()
-	fmt.Println("Paste all question text below, type 'END' at the end of the question block, then press 'Enter': ")
-	fmt.Println()
+	welcomeMessage := `
++++
+
+Welcome to the Auto Question Formatter
+This tool is used to convert text copied from Word or equivalent
+It will generate a .csv file formatted for Brightspace
+v1.5.6
+
++++
+
+Paste all question text below, type 'END' at the end of the question block, then press 'Enter': 
+`
+	fmt.Println(welcomeMessage)
 }
 
 func main() {
