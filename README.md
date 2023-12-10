@@ -60,21 +60,22 @@ Use the following sample inputs as a test in the text-only version (v1.51) here 
 ## v1.54+ Sample Data
 
 ```
-What is the capital of Australia?
+Multiple choice question text example that can end in any character?
 
-a. Sydney
-b. Melbourne
-*c. Canberra
-d. Adelaide
+a. Option a text
+b. Option b text
+*c. Option c text
+d. Option d text
 @Feedback goes here
 +++
 
-What is the capital of Australia?
-
-a. Sydney
-b. Melbourne
-c. Canberra
-d. Adelaide
+Multiple choice question text example showing that there can be 3+ different options
+a) Option a
+b) Option b
+c) Option c
+d) Option d
+e) Option e
+f) Option f
 
 Answer c
 +++
@@ -90,8 +91,6 @@ Write this as a number. 7 tens of thousands, 4 hundreds and 2 ones	70402 or 70 4
 9 + 6 =
 15
 +++
-16 + 7 =	23
----
 24 + 5 =	29
 @Feedback goes here
 ---
@@ -127,11 +126,14 @@ False
 4. Who wrote the novel "Pride and Prejudice"?
 
 A) Charles Dickens
+@@Feedback for option A (from v1.5.7)
 B) Jane Austen
 C) Mark Twain
+@@Feedback for option C (from v1.5.7)
 D) George Orwell
 
 Correct answer B.
+@Overall question feedback is formatted like this
 ---
 What is the square root of 81?
 
