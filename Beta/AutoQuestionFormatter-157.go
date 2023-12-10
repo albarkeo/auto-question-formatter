@@ -5,6 +5,7 @@ import (
 	"encoding/csv"
 	"fmt"
 	"log"
+	"net/url"
 	"os"
 	"regexp"
 	"sort"
@@ -232,7 +233,8 @@ func handleQuestionTextLine(line string, q *Question, lineCount *int) {
 
 func handleImages(line string, q *Question) bool {
 	if strings.HasPrefix(line, "[[") && strings.HasSuffix(line, "]]") {
-		q.Image = strings.Trim(line, "[]")
+		line = strings.Trim(line, "[]")
+		q.Image = url.QueryEscape(line)
 		return true
 	}
 	return false
