@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"encoding/csv"
 	"fmt"
 	"log"
@@ -32,20 +33,19 @@ var removeListPrefixes = true // Change this to false if you want to keep the pr
 var prefixes = []string{"answer ", "answer: ", "answer- ", "answers ", "answers: ", "answers- ", "correct answer ", "correct answer: ", "correct answer- ", "correct answers: ", "correct answers- "}
 
 func printWelcomeMessage() {
-	fmt.Println()
-	fmt.Println()
-	fmt.Println()
-	fmt.Println("+++")
-	fmt.Println()
-	fmt.Println("Welcome to the Auto Question Formatter")
-	fmt.Println("This tool is used to convert text copied from Word or equivalent")
-	fmt.Println("It will generate a .csv file formatted for Brightspace")
-	fmt.Println("v1.5.6")
-	fmt.Println()
-	fmt.Println("+++")
-	fmt.Println()
-	fmt.Println("Paste all question text below, type 'END' at the end of the question block, then press 'Enter': ")
-	fmt.Println()
+	welcomeMessage := `
++++
+
+Welcome to the Auto Question Formatter
+This tool is used to convert text copied from Word or equivalent
+It will generate a .csv file formatted for Brightspace
+v1.6
+
++++
+
+Paste all question text below, type 'END' at the end of the question block, then press 'Enter': 
+`
+	fmt.Println(welcomeMessage)
 }
 
 func main() {
@@ -474,22 +474,11 @@ func printQuestions(questions []Question, prefixes []string) {
 	}
 }
 
-func writeQuestionsToCSV(questions []Question, prefixes []string) {
-	// Get the current date and time
-	now := time.Now()
-
-	// Format the date and time as a string
-	timestamp := now.Format("20060102_1504")
-	// Create a CSV file with the timestamp in the name
-	file, err := os.Create("Formatted_questions_" + timestamp + ".csv")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-
-	// Create a CSV writer
-	writer := csv.NewWriter(file)
-	defer writer.Flush()
+//export writeQuestionsToCSV
+func writeQuestionsToCSV(questions []Question, prefixes []string) (string, string) {
+	// Create a buffer to hold the CSV data
+	var b bytes.Buffer
+	writer := csv.NewWriter(&b)
 
 	// Loop through the questions
 	for _, q := range questions {
@@ -576,4 +565,21 @@ func writeQuestionsToCSV(questions []Question, prefixes []string) {
 			writer.Write([]string{""})
 		}
 	}
+
+	// Make sure to flush the writer to ensure all data is written to the buffer
+	writer.Flush()
+
+	// Get the current date and time
+	now := time.Now()
+
+	// Format the date and time as a string
+	timestamp := now.Format("20060102_1504")
+
+	// Return the CSV data and the timestamp
+	return b.String(), timestamp
+}
+
+//export getPrefixes
+func getPrefixes() string {
+	return strings.Join(prefixes, ",")
 }

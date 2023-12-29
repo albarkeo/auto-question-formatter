@@ -2,16 +2,14 @@ package main
 
 import (
 	"bufio"
-	"encoding/csv"
 	"fmt"
-	"log"
+	"io"
 	"net/url"
-	"os"
 	"regexp"
 	"sort"
 	"strconv"
 	"strings"
-	"time"
+	"syscall/js"
 	"unicode"
 )
 
@@ -38,7 +36,7 @@ func printWelcomeMessage() {
 Welcome to the Auto Question Formatter
 This tool is used to convert text copied from Word or equivalent
 It will generate a .csv file formatted for Brightspace
-v1.5.7
+v1.6
 
 +++
 
@@ -48,9 +46,24 @@ Paste all question text below, type 'END' at the end of the question block, then
 }
 
 func main() {
+	c := make(chan struct{}, 0)
+
+	js.Global().Set("RunMain", js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		csvData := RunMain(args[0].String())
+		return csvData
+	}))
+	<-c
+}
+
+func RunMain(input string) string {
 	printWelcomeMessage()
 
-	reader := bufio.NewReader(os.Stdin)
+	// Convert the input string to a strings.Reader
+	strReader := strings.NewReader(input)
+
+	// Wrap the strings.Reader with a bufio.Reader
+	reader := bufio.NewReader(strReader)
+
 	inputQuestionsText := readInput(reader)
 	questionNumber := 1
 	questions := []Question{}
@@ -131,16 +144,21 @@ func main() {
 	writeQuestionsToCSV(questions, prefixes)
 
 	fmt.Println()
-	fmt.Println("Success! CSV file saved to location of this program")
+	fmt.Println("Success!")
 
+	csvData := writeQuestionsToCSV(questions, prefixes)
+	return csvData
 }
 
 func readInput(reader *bufio.Reader) string {
 	var inputQuestionsText string
 	for {
 		line, err := reader.ReadString('\n')
-		if err != nil {
-			log.Fatal(err)
+		// If the error is io.EOF, we've reached the end of the input
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			fmt.Println(err)
 		}
 
 		// Check if the line is the termination string
@@ -171,9 +189,11 @@ func handleTabSeparatedLine(line string, q *Question, questions *[]Question) {
 		q.Text = splitLine[0]
 		q.Options["1"] = splitLine[1]
 		*questions = append(*questions, *q)
-		*q = Question{Options: make(map[string]string)}
+		*q = Question{
+			Options:        make(map[string]string),
+			OptionFeedback: make(map[string]string),
+		}
 	}
-
 }
 
 func handleCorrectAnswerLine(line string, q *Question) (*Question, string, bool) {
@@ -192,7 +212,10 @@ func handleEndOfQuestion(line string, q *Question, questions *[]Question) bool {
 			*questions = append(*questions, *q)
 		}
 		// Reset the question
-		*q = Question{Options: make(map[string]string)}
+		*q = Question{
+			Options:        make(map[string]string),
+			OptionFeedback: make(map[string]string),
+		}
 		return true
 	}
 	return false
@@ -203,7 +226,10 @@ func handleNewQuestion(line string, q *Question, questions *[]Question, question
 		if q.Text != "" && len(q.Options) > 0 {
 			*questions = append(*questions, *q)
 		}
-		*q = Question{Options: make(map[string]string)}
+		*q = Question{
+			Options:        make(map[string]string),
+			OptionFeedback: make(map[string]string),
+		}
 
 		// Remove the question number, '.' and any leading white space from the line
 		questionLineNoNumber := strings.TrimSpace(strings.TrimPrefix(line, strconv.Itoa(*questionNumber)+"."))
@@ -400,7 +426,7 @@ func handleOptionFeedback(line string, q *Question) bool {
 func printQuestions(questions []Question, prefixes []string) {
 	for _, q := range questions {
 		fmt.Println()
-		fmt.Printf("NewQuestion,%s\n", q.Type)
+		fmt.Printf("QuestionType,%s\n", q.Type)
 		if q.ID != 0 {
 			fmt.Printf("ID,%d\n", q.ID)
 		} else {
@@ -473,45 +499,29 @@ func printQuestions(questions []Question, prefixes []string) {
 	}
 }
 
-func writeQuestionsToCSV(questions []Question, prefixes []string) {
-	// Get the current date and time
-	now := time.Now()
-
-	// Format the date and time as a string
-	timestamp := now.Format("20060102_1504")
-	// Create a CSV file with the timestamp in the name
-	file, err := os.Create("Formatted_questions_" + timestamp + ".csv")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-
-	// Create a CSV writer
-	writer := csv.NewWriter(file)
-	defer writer.Flush()
+func writeQuestionsToCSV(questions []Question, prefixes []string) string {
+	// Create a strings.Builder to hold the CSV data
+	var b strings.Builder
 
 	// Loop through the questions
 	for _, q := range questions {
-		err := writer.Write([]string{"NewQuestion", q.Type})
-		if err != nil {
-			log.Fatal(err)
-		}
+		fmt.Fprintf(&b, "QuestionType,%s\n", q.Type)
 		if q.ID != 0 {
-			writer.Write([]string{"ID", fmt.Sprintf("%d", q.ID)})
+			fmt.Fprintf(&b, "ID,%d\n", q.ID)
 		} else {
-			writer.Write([]string{"ID", ""})
+			b.WriteString("ID,\n")
 		}
 
-		writer.Write([]string{"Title"})
-		writer.Write([]string{"QuestionText", q.Text})
-		writer.Write([]string{"Points"})
-		writer.Write([]string{"Difficulty"})
+		b.WriteString("Title,\n")
+		fmt.Fprintf(&b, "QuestionText,%s\n", q.Text)
+		b.WriteString("Points,\n")
+		b.WriteString("Difficulty,\n")
 		if q.Image != "" {
-			writer.Write([]string{"Image", "images/" + q.Image})
+			fmt.Fprintf(&b, "Image,images/%s\n", q.Image)
 		}
 		if q.Type == "WR" {
-			writer.Write([]string{"InitialText"})
-			writer.Write([]string{"AnswerKey"})
+			b.WriteString("InitialText,\n")
+			b.WriteString("AnswerKey,\n")
 		} else {
 
 			var keys []string
@@ -529,20 +539,20 @@ func writeQuestionsToCSV(questions []Question, prefixes []string) {
 					}
 					feedback := q.OptionFeedback[key] // Get the feedback for the option
 					if removeListPrefixes {
-						writer.Write([]string{"Option", score, option, feedback})
+						fmt.Fprintf(&b, "Option,%s,%s,%s\n", score, option, feedback)
 					} else {
-						writer.Write([]string{"Option", score, key + " " + option, feedback})
+						fmt.Fprintf(&b, "Option,%s,%s %s,%s\n", score, key, option, feedback)
 					}
 				}
 
 			} else if q.Type == "TF" {
 				q.Answer = strings.TrimSpace(q.Answer)
 				if strings.ToLower(q.Answer) == "true" || strings.ToLower(q.Answer) == "t" || strings.ToLower(q.Answer) == "true true" {
-					writer.Write([]string{"TRUE", "100"})
-					writer.Write([]string{"FALSE", "0"})
+					b.WriteString("TRUE,100\n")
+					b.WriteString("FALSE,0\n")
 				} else {
-					writer.Write([]string{"TRUE", "0"})
-					writer.Write([]string{"FALSE", "100"})
+					b.WriteString("TRUE,0\n")
+					b.WriteString("FALSE,100\n")
 				}
 			} else if q.Type == "SA" {
 				// Get the first (and only) option
@@ -564,15 +574,18 @@ func writeQuestionsToCSV(questions []Question, prefixes []string) {
 							}
 						}
 					}
-					writer.Write([]string{"Answer", "100", answer})
+					fmt.Fprintf(&b, "Answer,100,%s\n", answer)
 				}
 			}
 
-			writer.Write([]string{"Hint"})
-			writer.Write([]string{"Feedback", q.Feedback})
+			b.WriteString("Hint,\n")
+			fmt.Fprintf(&b, "Feedback,%s\n", q.Feedback)
 
 			// Add an empty line after each question
-			writer.Write([]string{""})
+			b.WriteString("///\n")
 		}
 	}
+
+	// Return the CSV data as a string
+	return b.String()
 }
