@@ -197,14 +197,15 @@ func handleTabSeparatedLine(line string, q *Question, questions *[]Question) {
 }
 
 func handleCorrectAnswerLine(line string, q *Question) (*Question, string, bool) {
-	if strings.HasPrefix(line, "*") {
-		line = strings.TrimPrefix(line, "*") // this line is the correct answer...
-		q.AnswerKey = string(line[0])        // Get the first character of the line as the answer key
+	if strings.HasPrefix(line, "*") || (len(line) > 2 && line[1:2] == "*") {
+		line = strings.Replace(line, "*", "", 1) // Remove the asterisk from the line
+		q.AnswerKey = string(line[0])            // Get the first character of the line as the answer key
 		q.Answer = q.AnswerKey
 		return q, line, true
 	}
 	return q, line, false
 }
+
 
 func handleEndOfQuestion(line string, q *Question, questions *[]Question) bool {
 	if strings.HasSuffix(line, "+++") || strings.HasSuffix(line, "---") {
